@@ -22,11 +22,18 @@ To delete tables in the database utilize the tables module and class Tables.
 the delete_Table function accepts a list of table names to delete.
 """
 
-
+# Create Database
 DB = "Riesel Database.sqlite"
 # createDB = cd.createDatabase(DB)
 
-attributes = ["Field", "[Size (acre)]", "[Size (ha)]", "Landuse"]
-attribute_types = ["TEXT", "FLOAT", "FLOAT", "INTEGER REFERENCES Landuse (ID)"]
+# Connect to Database and add tables
+attributes = ["[Field ID]", "Northing", "Easting", "Latitude", "Longitude"]
+attribute_types = ["INTEGER REFERENCES Fields (ID)", "Float", "Float", "Float", "Float"]
 tb = tables.Tables(DB)
-tb.add_Table("Fields", attributes, attribute_types)
+tb.add_Table("[Field Boundaries]", attributes, attribute_types)
+
+# Clear Tables if Necessary
+# tb.clear_Table(["[Field Boundaries]"])
+
+# Delete Tables if Necessary
+# tb.delete_Table(["[Field Boundaries]"])
