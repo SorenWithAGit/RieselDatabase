@@ -12,9 +12,9 @@ class Tables:
             tables_script += str(attribute +  " " + attribute_types[i] + ",")
         tables_script += ");"
         tables_script = tables_script.replace(",);", ");")
-        print(tables_script)
-        # self.cur.executescript(tables_script)
-        # self.conn.commit()
+        # print(tables_script)
+        self.cur.executescript(tables_script)
+        self.conn.commit()
 
     def clear_Table(self, table_names):
         for table in table_names:
@@ -26,7 +26,7 @@ class Tables:
     def delete_Table(self, table_names):
         for table in table_names:
             delete_script = ""
-            delete_script += str("DELETE TABLE " + table)
+            delete_script += str("DROP TABLE " + table)
         self.cur.executescript(delete_script)
         self.conn.commit()
 
