@@ -1,5 +1,6 @@
 from src import createDatabase as cd
 from src import tables
+from src import dates
 
 
 """
@@ -42,14 +43,23 @@ tb.delete_Table(["[Field Boundaries]"])
 DB = "Riesel Database.sqlite"
 # createDB = cd.createDatabase(DB)
 
+
 # Connect to Database and add tables
-attributes = ["[Field ID]", "Northing", "Easting", "Latitude", "Longitude"]
-attribute_types = ["INTEGER REFERENCES Fields (ID)", "Float", "Float", "Float", "Float"]
+# attributes = ["[Field ID]", "Northing", "Easting", "Latitude", "Longitude"]
+# attribute_types = ["INTEGER REFERENCES Fields (ID)", "Float", "Float", "Float", "Float"]
 tb = tables.Tables(DB)
-tb.add_Table("[Field Boundaries]", attributes, attribute_types)
+# tb.add_Table("[Field Boundaries]", attributes, attribute_types)
 
 # Clear Tables if Necessary
-# tb.clear_Table(["[Field Boundaries]"])
+# tb.clear_Table(["[Dates]"])
 
 # Delete Tables if Necessary
 # tb.delete_Table(["[Field Boundaries]"])
+
+
+# Create pandas DataFrame with provided dates
+# date_df = dates.dates.generate_dates("1937-01-01", "2025-12-31")
+
+# Connect to Database and add dates from DataFrame
+# add_dates = dates.db_dates(DB)
+# add_dates.add_dates(date_df)
