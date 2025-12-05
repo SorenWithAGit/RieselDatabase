@@ -19,6 +19,7 @@ DB = "Riesel Database.sqlite"
 # Create Database
 # createDB = cd.createDatabase(DB)
 
+
 """
 #######################################################################
 
@@ -57,8 +58,6 @@ tb.delete_Table(["[Field Boundaries]"])
 #######################################################################
 """
 
-
-#######################################################################
 # Connect to Database and add tables
 # attributes = ["[Field ID]", "Northing", "Easting", "Latitude", "Longitude"]
 # attribute_types = ["INTEGER REFERENCES Fields (ID)", "Float", "Float", "Float", "Float"]
@@ -70,6 +69,7 @@ tb.delete_Table(["[Field Boundaries]"])
 
 # Delete Tables if Necessary
 # tb.delete_Table(["[Field Boundaries]"])
+
 
 """
 #######################################################################
@@ -87,6 +87,7 @@ date_df = dates.date_range.generate_dates("1937-01-01", "2025-12-31")
 
 # Create pandas DataFrame with provided dates
 # date_df = dates.date_range.generate_dates("1937-01-01", "2025-12-31")
+
 
 """
 #######################################################################
