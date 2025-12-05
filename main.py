@@ -2,6 +2,8 @@ from src import createDatabase as cd
 from src import tables
 from src import dates
 
+DB = "Riesel Database.sqlite"
+
 """
 #######################################################################
 
@@ -15,7 +17,6 @@ DB = "Riesel Database.sqlite"
 #######################################################################
 """
 # Create Database
-DB = "Riesel Database.sqlite"
 # createDB = cd.createDatabase(DB)
 
 """
