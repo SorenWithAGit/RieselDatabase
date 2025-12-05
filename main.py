@@ -2,6 +2,21 @@ from src import createDatabase as cd
 from src import tables
 from src import dates
 
+"""
+#######################################################################
+
+To create an SQLITE database utilize the module createDB and class
+createDatabase which accepts one paramater a string of the filename.
+
+An example being
+DB = "Riesel Database.sqlite"
+# createDB = cd.createDatabase(DB)
+
+#######################################################################
+"""
+# Create Database
+DB = "Riesel Database.sqlite"
+# createDB = cd.createDatabase(DB)
 
 """
 #######################################################################
@@ -41,9 +56,6 @@ tb.delete_Table(["[Field Boundaries]"])
 #######################################################################
 """
 
-# Create Database
-DB = "Riesel Database.sqlite"
-# createDB = cd.createDatabase(DB)
 
 #######################################################################
 # Connect to Database and add tables
