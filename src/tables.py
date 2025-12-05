@@ -19,7 +19,7 @@ class Tables:
     def clear_Table(self, table_names: str):
         for table in table_names:
             clear_script = ""
-            clear_script += str("TRUNCATE TABLE " + table)
+            clear_script += str("DELETE FROM " + table)
         self.cur.executescript(clear_script)
         self.conn.commit()
 
