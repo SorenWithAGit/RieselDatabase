@@ -25,6 +25,7 @@ Tables.
 The clear_Table function accepts a list of table names to clear.
 
 An example being:
+tb = tables.Tables(DB)
 tb.clear_Table(["[Field Boundaries]"])
 
 ------------------------------------------------------------------------
@@ -34,6 +35,7 @@ Tables. the delete_Table function accepts a list of table names to
 delete.
 
 An example being:
+tb = tables.Tables(DB)
 tb.delete_Table(["[Field Boundaries]"])
 
 #######################################################################
@@ -43,11 +45,11 @@ tb.delete_Table(["[Field Boundaries]"])
 DB = "Riesel Database.sqlite"
 # createDB = cd.createDatabase(DB)
 
-
+#######################################################################
 # Connect to Database and add tables
 # attributes = ["[Field ID]", "Northing", "Easting", "Latitude", "Longitude"]
 # attribute_types = ["INTEGER REFERENCES Fields (ID)", "Float", "Float", "Float", "Float"]
-tb = tables.Tables(DB)
+# tb = tables.Tables(DB)
 # tb.add_Table("[Field Boundaries]", attributes, attribute_types)
 
 # Clear Tables if Necessary
@@ -56,10 +58,37 @@ tb = tables.Tables(DB)
 # Delete Tables if Necessary
 # tb.delete_Table(["[Field Boundaries]"])
 
+"""
+#######################################################################
+
+To create a panadas DataFrame containing all dates within a date range
+utilize the module dates, class date_range, and function generate dates
+which accepts two parameters a start date, and end date. Witht the 
+format: YYYY,MM,DD.
+
+An example being:
+date_df = dates.date_range.generate_dates("1937-01-01", "2025-12-31")
+
+#######################################################################
+"""
 
 # Create pandas DataFrame with provided dates
-# date_df = dates.dates.generate_dates("1937-01-01", "2025-12-31")
+# date_df = dates.date_range.generate_dates("1937-01-01", "2025-12-31")
+
+"""
+#######################################################################
+
+To add dates to the database from the returned DataFrame utilize the
+module dates, class db_dates, and function add_dates which accepts a 
+datafrmae as the only parameter (generated above).
+
+An example being:
+Dates = dates.db_dates(DB)
+Dates.add_dates(date_df)
+
+#######################################################################
+"""
 
 # Connect to Database and add dates from DataFrame
-# add_dates = dates.db_dates(DB)
-# add_dates.add_dates(date_df)
+# Dates = dates.db_dates(DB)
+# Dates.add_dates(date_df)
