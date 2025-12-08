@@ -82,7 +82,7 @@ tb.delete_Table(["[Field Boundaries]"])
 #######################################################################
 
 To add an attribute in a table utilize the tables module and class
-Tables and function attributes which accepts three parameters: 
+Tables and function add_attributes which accepts three parameters: 
 a sting of the table name, a list of table attributes, and a list of
 table attribute types.
 
@@ -95,6 +95,23 @@ tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
 # tb = tables.Tables(DB)
 # tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+
+
+"""
+#######################################################################
+
+To rename an attribute in a table utilize the tables module and class
+Tables and function rename_columns which accepts three parameters:
+a string of the table name, a list of old attribute names, and a
+list of new attribute names
+
+An example being:
+tb = tables.Tables(DB)
+tb.rename_columns("Seasons", ["[Start Date]", "[End Date]"], 
+                    ["Begins", "Ends"])
+
+#######################################################################
+"""
 
 
 """
