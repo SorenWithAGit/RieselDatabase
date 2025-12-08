@@ -45,42 +45,6 @@ tb.add_Table("Fields", attributes, attribute_types)
 """
 #######################################################################
 
-To clear tables in the database utilize the tables module and class 
-Tables.
-The clear_Table function accepts a list of table names to clear.
-
-An example being:
-tb = tables.Tables(DB)
-tb.clear_Table(["[Field Boundaries]"])
-
-#######################################################################
-"""
-
-# tb = tables.Tables(DB)
-# tb.clear_Table(["[Field Boundaries]"])
-
-
-"""
-#######################################################################
-
-To delete tables in the database utilize the tables module and class 
-Tables. the delete_Table function accepts a list of table names to
-delete.
-
-An example being:
-tb = tables.Tables(DB)
-tb.delete_Table(["[Field Boundaries]"])
-
-#######################################################################
-"""
-
-# tb = tables.Tables(DB)
-# tb.delete_Table(["[Field Boundaries]"])
-
-
-"""
-#######################################################################
-
 To add an attribute in a table utilize the tables module and class
 Tables and function add_attributes which accepts three parameters: 
 a sting of the table name, a list of table attributes, and a list of
@@ -131,6 +95,42 @@ tb.remove_entry("Year", [12, 15, 17])
 
 # tb = tables.Tables(DB)
 # tb.remove_entry("Year", [12, 15, 17])
+
+
+"""
+#######################################################################
+
+To clear tables in the database utilize the tables module and class 
+Tables.
+The clear_Table function accepts a list of table names to clear.
+
+An example being:
+tb = tables.Tables(DB)
+tb.clear_Table(["[Field Boundaries]"])
+
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.clear_Table(["[Field Boundaries]"])
+
+
+"""
+#######################################################################
+
+To delete tables in the database utilize the tables module and class 
+Tables. the delete_Table function accepts a list of table names to
+delete.
+
+An example being:
+tb = tables.Tables(DB)
+tb.delete_Table(["[Field Boundaries]"])
+
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.delete_Table(["[Field Boundaries]"])
 
 
 """
