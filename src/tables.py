@@ -33,7 +33,3 @@ class Tables:
             delete_script += str("DROP TABLE " + table)
         self.cur.executescript(delete_script)
         self.conn.commit()
-
-
-
-
