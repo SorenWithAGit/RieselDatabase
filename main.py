@@ -55,6 +55,17 @@ An example being:
 tb = tables.Tables(DB)
 tb.delete_Table(["[Field Boundaries]"])
 
+------------------------------------------------------------------------
+
+To add an attribute in a table utilize the tables module and class
+Tables and function attributes which accepts three parameters: 
+a sting of the table name, a list of table attributes, and a list of
+table attribute types.
+
+An example being:
+tb = tables.Tables(DB)
+tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+
 #######################################################################
 """
 
@@ -69,6 +80,9 @@ tb.delete_Table(["[Field Boundaries]"])
 
 # Delete Tables if Necessary
 # tb.delete_Table(["[Field Boundaries]"])
+
+# Add attributes
+# tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
 
 """
