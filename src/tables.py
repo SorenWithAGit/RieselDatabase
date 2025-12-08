@@ -25,6 +25,13 @@ class Tables:
             self.cur.executescript(script)
             self.conn.commit()
 
+    # Remove specific entries from table
+    def remove_entry(self, table_name: str, entry_ids: list):
+        for id in entry_ids:
+            script = str("DELETE FROM " + table_name + " WHERE id = " + id + ";")
+            self.cur.executescript(script)
+            self.conn.commit()
+
     # remove all entries from table
     def clear_Table(self, table_names: str):
         for table in table_names:
