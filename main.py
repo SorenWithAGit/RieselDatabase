@@ -75,7 +75,7 @@ tb.delete_Table(["[Field Boundaries]"])
 #######################################################################
 
 To create a panadas DataFrame containing all dates within a date range
-utilize the module dates, class date_range, and function generate dates
+utilize the module dates, class date_range, and function generate_dates
 which accepts two parameters a start date, and end date. Witht the 
 format: YYYY,MM,DD.
 
@@ -106,3 +106,38 @@ Dates.add_dates(date_df)
 # Connect to Database and add dates from DataFrame
 # Dates = dates.db_dates(DB)
 # Dates.add_dates(date_df)
+
+
+"""
+#######################################################################
+
+To create a panadas DataFrame containing all years within a date range
+utilize the module dates, class date_range, and function generate_years
+which accepts two parameters a start date, and end date. Witht the 
+format: YYYY,MM,DD.
+
+An example being:
+year_df = dates.date_range.generate_years("1937-01-01", "2025-12-31")
+
+#######################################################################
+"""
+
+# year_df = dates.date_range.generate_years("1937-01-01", "2025-12-31")
+
+
+"""
+#######################################################################
+
+To add years to the database from the returned DataFrame utilize the
+module dates, class db_dates, and function add_years which accepts a 
+datafrmae as the only parameter (generated above).
+
+An example being:
+years = dates.db_dates(DB)
+years.add_years(year_df)
+
+#######################################################################
+"""
+
+# years = dates.db_dates(DB)
+# years.add_years(year_df)
