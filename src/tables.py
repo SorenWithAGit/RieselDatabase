@@ -1,11 +1,13 @@
 import sqlite3
 
 class Tables:
+    # connect to database
     def __init__(self, database):
         self.database = database
         self.conn = sqlite3.connect(self.database)
         self.cur = self.conn.cursor()
     
+    # add tables to databse
     def add_Table(self, table_name: str, attribute_names: list, attribute_types: list):
         tables_script = str("CREATE TABLE " + table_name + " (ID INTEGER PRIMARY KEY,")
         for i, attribute in enumerate(attribute_names):
@@ -16,6 +18,7 @@ class Tables:
         self.cur.executescript(tables_script)
         self.conn.commit()
 
+    # remove all entries from table
     def clear_Table(self, table_names: str):
         for table in table_names:
             clear_script = ""
@@ -23,6 +26,7 @@ class Tables:
         self.cur.executescript(clear_script)
         self.conn.commit()
 
+    # remove table from databse
     def delete_Table(self, table_names: str):
         for table in table_names:
             delete_script = ""
