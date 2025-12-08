@@ -18,6 +18,13 @@ class Tables:
         self.cur.executescript(tables_script)
         self.conn.commit()
 
+    # Add columns to table
+    def add_attributes(self, table_name: str, attribute_names: list, attribute_types: list):
+        for i, attribute in enumerate(attribute_names):
+            script = str("ALTER TABLE " + table_name + " ADD COLUMN " + attribute + attribute_types[i] + ";")
+            self.cur.executescript(script)
+            self.conn.commit()
+
     # remove all entries from table
     def clear_Table(self, table_names: str):
         for table in table_names:
