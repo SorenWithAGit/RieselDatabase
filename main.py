@@ -66,6 +66,17 @@ An example being:
 tb = tables.Tables(DB)
 tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
+------------------------------------------------------------------------
+
+To remove entries from a table utilize the tables module and class
+Tables and function remove_entry which accepts two parameters:
+a string of the table name, and a list of ids corresponding to the id
+attribute in the table:
+
+An example being:
+tb = tables.Tables(DB)
+tb.remove_entry("Year", [12, 15, 17])
+
 #######################################################################
 """
 
