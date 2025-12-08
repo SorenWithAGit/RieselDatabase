@@ -2,7 +2,7 @@ import pandas as pd
 import sqlite3
 
 class date_range:
-    def generate_dates(start_date, end_date):
+    def generate_dates(start_date: str, end_date: str):
         date_range = pd.date_range(start = start_date, end = end_date)
         date_df = pd.DataFrame({"Date" : date_range})
         return date_df
