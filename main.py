@@ -35,7 +35,15 @@ attribute_types = ["TEXT", "FLOAT", "FLOAT", "INTEGER REFERENCES
 tb = tables.Tables(DB)
 tb.add_Table("Fields", attributes, attribute_types)
 
-------------------------------------------------------------------------
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.add_Table("Fields", attributes, attribute_types)
+
+
+"""
+#######################################################################
 
 To clear tables in the database utilize the tables module and class 
 Tables.
@@ -45,7 +53,15 @@ An example being:
 tb = tables.Tables(DB)
 tb.clear_Table(["[Field Boundaries]"])
 
-------------------------------------------------------------------------
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.clear_Table(["[Field Boundaries]"])
+
+
+"""
+#######################################################################
 
 To delete tables in the database utilize the tables module and class 
 Tables. the delete_Table function accepts a list of table names to
@@ -55,7 +71,15 @@ An example being:
 tb = tables.Tables(DB)
 tb.delete_Table(["[Field Boundaries]"])
 
-------------------------------------------------------------------------
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.delete_Table(["[Field Boundaries]"])
+
+
+"""
+#######################################################################
 
 To add an attribute in a table utilize the tables module and class
 Tables and function attributes which accepts three parameters: 
@@ -66,7 +90,15 @@ An example being:
 tb = tables.Tables(DB)
 tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
-------------------------------------------------------------------------
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+
+
+"""
+#######################################################################
 
 To remove entries from a table utilize the tables module and class
 Tables and function remove_entry which accepts two parameters:
@@ -80,20 +112,8 @@ tb.remove_entry("Year", [12, 15, 17])
 #######################################################################
 """
 
-# Connect to Database and add tables
-# attributes = ["[Field ID]", "Northing", "Easting", "Latitude", "Longitude"]
-# attribute_types = ["INTEGER REFERENCES Fields (ID)", "Float", "Float", "Float", "Float"]
 # tb = tables.Tables(DB)
-# tb.add_Table("[Field Boundaries]", attributes, attribute_types)
-
-# Clear Tables if Necessary
-# tb.clear_Table(["[Dates]"])
-
-# Delete Tables if Necessary
-# tb.delete_Table(["[Field Boundaries]"])
-
-# Add attributes
-# tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+# tb.remove_entry("Year", [12, 15, 17])
 
 
 """
