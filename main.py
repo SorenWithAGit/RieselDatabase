@@ -1,3 +1,4 @@
+import sqlite3
 from src import createDatabase as cd
 from src import tables
 from src import dates
@@ -5,6 +6,7 @@ from src import dates
 DB = "Riesel Database.sqlite"
 
 """
+CREATE DATABASE
 #######################################################################
 
 To create an SQLITE database utilize the module createDB and class
@@ -21,6 +23,7 @@ DB = "Riesel Database.sqlite"
 
 
 """
+ADD TABLES
 #######################################################################
 
 To add tables to the database utilize the tables module and class 
@@ -43,6 +46,7 @@ tb.add_Table("Fields", attributes, attribute_types)
 
 
 """
+ADD ATTRIBUTES
 #######################################################################
 
 To add an attribute in a table utilize the tables module and class
@@ -62,6 +66,7 @@ tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
 
 """
+RENAME ATTRIBUTES
 #######################################################################
 
 To rename an attribute in a table utilize the tables module and class
@@ -79,6 +84,7 @@ tb.rename_columns("Seasons", ["[Start Date]", "[End Date]"],
 
 
 """
+REMOVE SPECIFIED ENTRIES
 #######################################################################
 
 To remove entries from a table utilize the tables module and class
@@ -98,6 +104,7 @@ tb.remove_entry("Year", [12, 15, 17])
 
 
 """
+CLEAR TABLE
 #######################################################################
 
 To clear tables in the database utilize the tables module and class 
@@ -116,6 +123,7 @@ tb.clear_Table(["[Field Boundaries]"])
 
 
 """
+DELETE TABLE
 #######################################################################
 
 To delete tables in the database utilize the tables module and class 
@@ -134,6 +142,7 @@ tb.delete_Table(["[Field Boundaries]"])
 
 
 """
+DATE DATAFRAME
 #######################################################################
 
 To create a panadas DataFrame containing all dates within a date range
@@ -152,6 +161,7 @@ date_df = dates.date_range.generate_dates("1937-01-01", "2025-12-31")
 
 
 """
+ADD DATES
 #######################################################################
 
 To add dates to the database from the returned DataFrame utilize the
@@ -171,6 +181,7 @@ Dates.add_dates(date_df)
 
 
 """
+YEAR DATAFRAME
 #######################################################################
 
 To create a panadas DataFrame containing all years within a date range
@@ -188,6 +199,7 @@ year_df = dates.date_range.generate_years("1937-01-01", "2025-12-31")
 
 
 """
+ADD YEAR
 #######################################################################
 
 To add years to the database from the returned DataFrame utilize the
