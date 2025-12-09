@@ -51,7 +51,7 @@ ADD ATTRIBUTES
 
 To add an attribute in a table utilize the tables module and class
 Tables and function add_attributes which accepts three parameters: 
-a sting of the table name, a list of table attributes, and a list of
+a string of the table name, a list of table attributes, and a list of
 table attribute types.
 
 An example being:
@@ -71,7 +71,7 @@ REMOVE COLUMN
 
 To remove a column from a table utilize the tables module and class
 Tables and function remove_column which accepts two parameters:
-a string of the table name, and a list of attributes to rename.
+a string of the table name, and a list of attributes to remove.
 
 An example being:
 tb = tables.Tables(DB)
@@ -82,7 +82,7 @@ tb.remove_column("Seasons", ["[Start Date]", "[End Date]"])
 
 
 """
-RENAME ATTRIBUTES
+RENAME Column
 #######################################################################
 
 To rename an attribute in a table utilize the tables module and class
