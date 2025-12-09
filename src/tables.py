@@ -19,14 +19,14 @@ class Tables:
         self.conn.commit()
 
     # Add columns to table
-    def add_attributes(self, table_name: str, attribute_names: list, attribute_types: list):
+    def add_columns(self, table_name: str, attribute_names: list, attribute_types: list):
         for i, attribute in enumerate(attribute_names):
             script = str("ALTER TABLE " + table_name + " ADD COLUMN " + attribute + attribute_types[i] + ";")
             self.cur.executescript(script)
             self.conn.commit()
 
     # Remove columns in table
-    def remove_column(self, table_name: str, attribute_names: list):
+    def remove_columns(self, table_name: str, attribute_names: list):
         for attribute in attribute_names:
             script = str ("ALTER TABLE " + table_name + " DROP COLUMN " + attribute + ";")
             self.cur.executescript(script)

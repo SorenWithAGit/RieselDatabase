@@ -46,10 +46,10 @@ tb.add_Table("Fields", attributes, attribute_types)
 
 
 """
-ADD ATTRIBUTES
+ADD COLUMNS
 #######################################################################
 
-To add an attribute in a table utilize the tables module and class
+To add a column to a table utilize the tables module and class
 Tables and function add_attributes which accepts three parameters: 
 a string of the table name, a list of table attributes, and a list of
 table attribute types.
@@ -66,7 +66,7 @@ tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
 
 """
-REMOVE COLUMN
+REMOVE COLUMNS
 #######################################################################
 
 To remove a column from a table utilize the tables module and class
@@ -82,7 +82,7 @@ tb.remove_column("Seasons", ["[Start Date]", "[End Date]"])
 
 
 """
-RENAME Column
+RENAME COLUMNS
 #######################################################################
 
 To rename an attribute in a table utilize the tables module and class
