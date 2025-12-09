@@ -25,6 +25,13 @@ class Tables:
             self.cur.executescript(script)
             self.conn.commit()
 
+    # Remove columns in table
+    def remove_column(self, table_name: str, attribute_names: list):
+        for attribute in attribute_names:
+            script = str ("ALTER TABLE " + table_name + " DROP COLUMN " + attribute + ";")
+            self.cur.executescript(script)
+            self.conn.commit()
+
     # Rename columns in table
     def rename_columns(self, table_name: str, old_attribute_name: list, new_attribute_name: list):
         for i, attribute in enumerate(old_attribute_name):
