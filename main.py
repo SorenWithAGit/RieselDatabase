@@ -66,6 +66,22 @@ tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
 
 """
+REMOVE COLUMN
+#######################################################################
+
+To remove a column from a table utilize the tables module and class
+Tables and function remove_column which accepts two parameters:
+a string of the table name, and a list of attributes to rename.
+
+An example being:
+tb = tables.Tables(DB)
+tb.remove_column("Seasons", ["[Start Date]", "[End Date]"])
+
+#######################################################################
+"""
+
+
+"""
 RENAME ATTRIBUTES
 #######################################################################
 
