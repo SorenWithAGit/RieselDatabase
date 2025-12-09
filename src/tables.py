@@ -35,8 +35,8 @@ class Tables:
     # Rename columns in table
     def rename_columns(self, table_name: str, old_attribute_name: list, new_attribute_name: list):
         for i, attribute in enumerate(old_attribute_name):
-            script = str("ALTER TABLE " + table_name + " RENAME COLUMN " + old_attribute_name + 
-                         " TO " + new_attribute_name + ";")
+            script = str("ALTER TABLE " + table_name + " RENAME COLUMN " + attribute + 
+                         " TO " + new_attribute_name[i] + ";")
             self.cur.executescript(script)
             self.conn.commit()
 
