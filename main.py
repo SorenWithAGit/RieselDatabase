@@ -42,13 +42,10 @@ tb.add_Table("Fields", attributes, attribute_types)
 #######################################################################
 """
 
-# attributes = ["[Rain Gauge ID]", "[Date ID]",
-#               "[Measured Precip (mm)]"]
-# attribute_types = ["INTEGER REFERENCES [Rain Gauges] (ID)", 
-#                    "INTEGER REFERENCES Dates (ID)",
-#                    "FLOAT"]
+# attributes = ["Unit", "[Unit Symbol]"]
+# attribute_types = ["TEXT", "TEXT"]
 # tb = tables.Tables(DB)
-# tb.add_Table("[Precipitation]", attributes, attribute_types)
+# tb.add_Table("[Units]", attributes, attribute_types)
 
 
 """
