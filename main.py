@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 from src import createDatabase as cd
 from src import tables
 from src import dates
@@ -41,8 +42,13 @@ tb.add_Table("Fields", attributes, attribute_types)
 #######################################################################
 """
 
+# attributes = ["[Rain Gauge ID]", "[Date ID]",
+#               "[Measured Precip (mm)]"]
+# attribute_types = ["INTEGER REFERENCES [Rain Gauges] (ID)", 
+#                    "INTEGER REFERENCES Dates (ID)",
+#                    "FLOAT"]
 # tb = tables.Tables(DB)
-# tb.add_Table("Fields", attributes, attribute_types)
+# tb.add_Table("[Precipitation]", attributes, attribute_types)
 
 
 """
@@ -231,3 +237,21 @@ years.add_years(year_df)
 
 # years = dates.db_dates(DB)
 # years.add_years(year_df)
+
+
+"""
+ADD SEASONS
+#######################################################################
+
+To add seasons to the database utilize the module dates, class seasons,
+and function add_seasons.
+
+An example being:
+seasons = dates.seasons(DB)
+seasons.add_seasons()
+
+#######################################################################
+"""
+
+# seasons = dates.seasons(DB)
+# seasons.add_seasons()
