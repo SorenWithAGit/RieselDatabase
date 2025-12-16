@@ -32,6 +32,7 @@ class db_dates:
                             date,)
                             )
         self.conn.commit()
+        self.conn.close()
 
     # insert years into database
     def add_years(self, year_df):
@@ -43,6 +44,7 @@ class db_dates:
                              year,)
                              )
         self.conn.commit()
+        self.conn.close()
 
 class seasons:
     # make df of seasons
@@ -72,3 +74,4 @@ class seasons:
                              end_date,)
                              )
             self.conn.commit()
+        self.conn.close()

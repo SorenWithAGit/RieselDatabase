@@ -17,6 +17,7 @@ class Tables:
         # print(tables_script)
         self.cur.executescript(tables_script)
         self.conn.commit()
+        self.conn.close()
 
     # Add columns to table
     def add_columns(self, table_name: str, attribute_names: list, attribute_types: list):
@@ -24,6 +25,7 @@ class Tables:
             script = str("ALTER TABLE " + table_name + " ADD COLUMN " + attribute + attribute_types[i] + ";")
             self.cur.executescript(script)
             self.conn.commit()
+        self.conn.close()
 
     # Remove columns in table
     def remove_columns(self, table_name: str, attribute_names: list):
@@ -31,6 +33,7 @@ class Tables:
             script = str ("ALTER TABLE " + table_name + " DROP COLUMN " + attribute + ";")
             self.cur.executescript(script)
             self.conn.commit()
+        self.conn.close()
 
     # Rename columns in table
     def rename_columns(self, table_name: str, old_attribute_name: list, new_attribute_name: list):
@@ -39,6 +42,7 @@ class Tables:
                          " TO " + new_attribute_name[i] + ";")
             self.cur.executescript(script)
             self.conn.commit()
+        self.conn.close()
 
     # Remove specific entries from table
     def remove_entry(self, table_name: str, entry_ids: list):
@@ -46,19 +50,22 @@ class Tables:
             script = str("DELETE FROM " + table_name + " WHERE id = " + id + ";")
             self.cur.executescript(script)
             self.conn.commit()
+        self.conn.close()
 
     # remove all entries from table
     def clear_Table(self, table_names: str):
         for table in table_names:
             clear_script = ""
             clear_script += str("DELETE FROM " + table)
-        self.cur.executescript(clear_script)
-        self.conn.commit()
+            self.cur.executescript(clear_script)
+            self.conn.commit()
+        self.conn.close()
 
     # remove table from databse
     def delete_Table(self, table_names: str):
         for table in table_names:
             delete_script = ""
             delete_script += str("DROP TABLE " + table)
-        self.cur.executescript(delete_script)
-        self.conn.commit()
+            self.cur.executescript(delete_script)
+            self.conn.commit()
+        self.conn.close()
