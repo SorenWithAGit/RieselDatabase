@@ -43,3 +43,32 @@ class db_dates:
                              year,)
                              )
         self.conn.commit()
+
+class seasons:
+    # make df of seasons
+    def __init__(self, database):
+        seasons = {"Season" : ["Spring", "Summer", "Fall", "Winter"],
+           "Start Date" : ["3/1", "6/1", "9/1", "12/1"],
+           "End Date" : ["5/31", "8/31", "11/30", "2/28"]}
+
+        self.seasons_df = pd.DataFrame(seasons)
+
+        self.database = database
+        self.conn = sqlite3.connect(self.database)
+        self.cur = self.conn.cursor()
+
+    def add_seasons(self):
+        for ind in self.seasons_df.index:
+            season = str(self.seasons_df.iloc[ind]["Season"])
+            start_date = str(self.seasons_df.iloc[ind]["Start Date"])
+            end_date = str(self.seasons_df.iloc[ind]["End Date"])
+            self.cur.execute('''INSERT INTO Seasons (
+                             [Season],
+                             [Start Date],
+                             [End Date])
+                             VALUES (?, ?, ?)''', (
+                             season,
+                             start_date,
+                             end_date,)
+                             )
+            self.conn.commit()
