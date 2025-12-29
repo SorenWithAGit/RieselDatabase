@@ -7,4 +7,5 @@ class createDatabase:
         self.conn = sqlite3.connect(self.database)
         self.cur = self.conn.cursor()
         self.conn.commit()
+        self.conn.close()
 
