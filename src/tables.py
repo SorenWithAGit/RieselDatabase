@@ -44,7 +44,7 @@ class Tables:
                 column_names.remove(name)
         self.conn.commit()
         self.conn.close()
-        print(column_names)
+        # print(column_names)
         return column_names
 
     # Rename columns in table
