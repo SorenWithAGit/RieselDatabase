@@ -35,6 +35,18 @@ class Tables:
             self.conn.commit()
         self.conn.close()
 
+    # Retrieve column names in table
+    def retrieve_names(self, table_name: str):
+        self.cur.execute(str("SELECT * FROM " + table_name))
+        column_names = list([description[0] for description in self.cur.description])
+        for name in column_names:
+            if "ID" in name:
+                column_names.remove(name)
+        self.conn.commit()
+        self.conn.close()
+        print(column_names)
+        return column_names
+
     # Rename columns in table
     def rename_columns(self, table_name: str, old_attribute_name: list, new_attribute_name: list):
         for i, attribute in enumerate(old_attribute_name):
