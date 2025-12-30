@@ -11,7 +11,7 @@ class Tables:
     def add_Table(self, table_name: str, attribute_names: list, attribute_types: list):
         tables_script = str("CREATE TABLE " + table_name + " (ID INTEGER PRIMARY KEY,")
         for i, attribute in enumerate(attribute_names):
-            tables_script += str(attribute +  " " + attribute_types[i] + ",")
+            tables_script += str("[" + attribute + "]" + " " + attribute_types[i] + ",")
         tables_script += ");"
         tables_script = tables_script.replace(",);", ");")
         # print(tables_script)
