@@ -8,9 +8,9 @@ class add_data:
         self.conn = sqlite3.connect(self.database)
         self.cur = self.conn.cursor()
 
-    # Add data to table
+    # Add a single record to table
     def add_record(self, table_name: str, column_names: list, data: list):
-        sql_statement = str("INSERT INTO " + table_name + "(")
+        sql_statement = str("INSERT INTO " + "[" + table_name + "]" + "(")
         for name in column_names:
             sql_statement += str("[" + name + "]" + ",")
         sql_statement += ")"
@@ -24,6 +24,7 @@ class add_data:
         self.conn.commit()
         self.conn.close()
 
+    # Add a dataframe to table
     def add_df(self, table_name: str, df):
         df.to_sql(table_name, self.conn, if_exists = "append", index = False)
         self.conn.commit()
