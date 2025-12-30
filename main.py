@@ -33,7 +33,7 @@ The add_Table function accepts three parameters: Table Name, list of
 Attributes, and list of Attribute Types.
 
 An example being:
-attributes = ["Field", "[Size (acre)]", "[Size (ha)]", "Landuse"]
+attributes = ["Field", "Size (acre)", "Size (ha)", "Landuse"]
 attribute_types = ["TEXT", "FLOAT", "FLOAT", "INTEGER REFERENCES 
                     Landuse (ID)"]
 tb = tables.Tables(DB)
