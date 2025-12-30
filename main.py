@@ -1,8 +1,8 @@
-import sqlite3
-import pandas as pd
+
 from src import createDatabase as cd
 from src import tables
 from src import dates
+from src import data
 
 DB = "Riesel Database.sqlite"
 
@@ -15,7 +15,7 @@ createDatabase which accepts one paramater a string of the filename.
 
 An example being
 DB = "Riesel Database.sqlite"
-# createDB = cd.createDatabase(DB)
+createDB = cd.createDatabase(DB)
 
 #######################################################################
 """
@@ -42,10 +42,12 @@ tb.add_Table("Fields", attributes, attribute_types)
 #######################################################################
 """
 
-# attributes = ["Unit", "[Unit Symbol]"]
-# attribute_types = ["TEXT", "TEXT"]
+# attributes = ["[Sample ID]", "[Unit ID]", "[Instrument ID]", 
+#               "[Nitrate/Nitrite]", "Ammonium", "Phosphorus"]
+# attribute_types = ["INTEGER REFERENCES Samples (ID)", "INTEGER REFERENCES Units (ID)", "INTEGER REFERENCES Instruments (ID)",
+#                    "FLOAT", "FLOAT", "FLOAT"]
 # tb = tables.Tables(DB)
-# tb.add_Table("[Units]", attributes, attribute_types)
+# tb.add_Table("[CFA Nutrients]", attributes, attribute_types)
 
 
 """
@@ -53,19 +55,19 @@ ADD COLUMNS
 #######################################################################
 
 To add a column to a table utilize the tables module and class
-Tables and function add_attributes which accepts three parameters: 
+Tables and function add_columns which accepts three parameters: 
 a string of the table name, a list of table attributes, and a list of
 table attribute types.
 
 An example being:
 tb = tables.Tables(DB)
-tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+tb.add_columns("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
 
 #######################################################################
 """
 
 # tb = tables.Tables(DB)
-# tb.add_attributes("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+# tb.add_columns("Fields", ["[Nickname]"], ["TEXT"])
 
 
 """
@@ -82,6 +84,25 @@ tb.remove_column("Seasons", ["[Start Date]", "[End Date]"])
 
 #######################################################################
 """
+
+
+"""
+RETRIEVE COLUMN NAMES
+#######################################################################
+
+To retrieve a list of the column names within a table utilize the 
+module tables and class Tables and function retrieve_names which 
+accepts one paramater a string of the table name.
+
+An example being:
+tb = tables.Tables(DB)
+tb.retrieve_names("Instruments")
+
+#######################################################################
+"""
+
+# tb = tables.Tables(DB)
+# tb.retrieve_names("[Field Boundaries]")
 
 
 """
@@ -157,7 +178,7 @@ tb.delete_Table(["[Field Boundaries]"])
 """
 
 # tb = tables.Tables(DB)
-# tb.delete_Table(["[Field Boundaries]"])
+# tb.delete_Table(["[Continious Flow Analysis]"])
 
 
 """
@@ -252,3 +273,29 @@ seasons.add_seasons()
 
 # seasons = dates.seasons(DB)
 # seasons.add_seasons()
+
+
+
+"""
+ADD RECORD
+#######################################################################
+
+To add a record to a table utilize the module data class data and 
+function add_record. Which accepts three parameters: table_name, column
+names which can be supplied by utilizing the module tables class 
+Tables and function retrieve_names which accepts the table name as
+the single parameter, and a list of the data to be entered.
+
+An example being:
+dat = data.add_data(DB)
+columns = tables.Tables(DB)
+names = columns.retrieve_names("[Lab Instruments]")
+dat.add_record("[Lab Instruments]", names, ["Agilent", "ICP-OES", "Temple"])
+
+#######################################################################
+"""
+
+# dat = data.add_data(DB)
+# columns = tables.Tables(DB)
+# names = columns.retrieve_names("[Lab Instruments]")
+# dat.add_record("[Lab Instruments]", names, ["Agilent", "ICP-OES", "Temple"])
