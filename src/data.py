@@ -9,18 +9,18 @@ class add_data:
         self.cur = self.conn.cursor()
 
     # Add data to table
-    def add_records(self, table_name: str, column_names: list, data):
-        records_to_enter = list(data.torecords(index = False))
+    def add_record(self, table_name: str, column_names: list, data: list):
         sql_statement = str("INSERT INTO " + table_name + "(")
         for name in column_names:
-            sql_statement += str(name + ",")
+            sql_statement += str("[" + name + "]" + ",")
         sql_statement += ")"
         sql_statement = sql_statement.replace(",)", ")")
         sql_statement += " VALUES ("
         sql_statement += "?," * len(column_names)
         sql_statement += ")"
         sql_statement = sql_statement.replace(",)", ")")
-        self.cur.executemany(sql_statement, records_to_enter)
+        print(sql_statement)
+        self.cur.execute(sql_statement, data)
         self.conn.commit()
         self.conn.close()
 
