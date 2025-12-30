@@ -19,7 +19,7 @@ class add_data:
         sql_statement += "?," * len(column_names)
         sql_statement += ")"
         sql_statement = sql_statement.replace(",)", ")")
-        print(sql_statement)
+        # print(sql_statement)
         self.cur.execute(sql_statement, data)
         self.conn.commit()
         self.conn.close()

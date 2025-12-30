@@ -61,7 +61,7 @@ table attribute types.
 
 An example being:
 tb = tables.Tables(DB)
-tb.add_columns("Seasons", ["[Start Date]", "[End Date]"], ["TEXT", "TEXT"])
+tb.add_columns("Seasons", ["Start Date", "End Date"], ["TEXT", "TEXT"])
 
 #######################################################################
 """
@@ -80,7 +80,7 @@ a string of the table name, and a list of attributes to remove.
 
 An example being:
 tb = tables.Tables(DB)
-tb.remove_column("Seasons", ["[Start Date]", "[End Date]"])
+tb.remove_column("Seasons", ["Start Date", "End Date"])
 
 #######################################################################
 """
@@ -96,7 +96,7 @@ accepts one paramater a string of the table name.
 
 An example being:
 tb = tables.Tables(DB)
-tb.retrieve_names("Instruments")
+tb.retrieve_names("Lab Instruments")
 
 #######################################################################
 """
@@ -116,7 +116,7 @@ list of new attribute names
 
 An example being:
 tb = tables.Tables(DB)
-tb.rename_columns("Seasons", ["[Start Date]", "[End Date]"], 
+tb.rename_columns("Seasons", ["Start Date", "End Date"], 
                     ["Begins", "Ends"])
 
 #######################################################################
@@ -153,7 +153,7 @@ The clear_Table function accepts a list of table names to clear.
 
 An example being:
 tb = tables.Tables(DB)
-tb.clear_Table(["[Field Boundaries]"])
+tb.clear_Table(["Field Boundaries"])
 
 #######################################################################
 """
@@ -172,7 +172,7 @@ delete.
 
 An example being:
 tb = tables.Tables(DB)
-tb.delete_Table(["[Field Boundaries]"])
+tb.delete_Table(["Field Boundaries"])
 
 #######################################################################
 """
@@ -289,8 +289,8 @@ the single parameter, and a list of the data to be entered.
 An example being:
 dat = data.add_data(DB)
 columns = tables.Tables(DB)
-names = columns.retrieve_names("[Lab Instruments]")
-dat.add_record("[Lab Instruments]", names, ["Agilent", "ICP-OES", "Temple"])
+names = columns.retrieve_names("Lab Instruments")
+dat.add_record("Lab Instruments", names, ["Agilent", "ICP-OES", "Temple"])
 
 #######################################################################
 """
