@@ -25,7 +25,7 @@ class add_data:
         self.conn.close()
 
     # Add a dataframe to table
-    def add_df(self, table_name: str, df):
+    def add_df(self, table_name: str, df: pd.DataFrame):
         df.to_sql(table_name, self.conn, if_exists = "append", index = False)
         self.conn.commit()
         self.conn.close()

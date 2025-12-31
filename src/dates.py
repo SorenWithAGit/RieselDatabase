@@ -23,7 +23,7 @@ class db_dates:
         self.cur = self.conn.cursor()
 
     # insert dates into database
-    def add_dates(self, date_df):
+    def add_dates(self, date_df: pd.DataFrame):
         for i in date_df.index:
             date = str(date_df["Date"][i]).split(" ")[0]
             self.cur.execute('''INSERT INTO Dates (
@@ -35,7 +35,7 @@ class db_dates:
         self.conn.close()
 
     # insert years into database
-    def add_years(self, year_df):
+    def add_years(self, year_df: pd.DataFrame):
         for i in year_df.index:
             year = str(year_df.iloc[i][0])
             self.cur.execute('''INSERT INTO Year (
