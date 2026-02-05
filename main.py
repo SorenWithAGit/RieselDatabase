@@ -33,21 +33,25 @@ The add_Table function accepts three parameters: Table Name, list of
 Attributes, and list of Attribute Types.
 
 An example being:
-attributes = ["Field", "Size (acre)", "Size (ha)", "Landuse"]
-attribute_types = ["TEXT", "FLOAT", "FLOAT", "INTEGER REFERENCES 
-                    Landuse (ID)"]
+attributes = ["Aluminium", "Arsenic", "Calcium", "Copper",
+                    "Iron", "Potassium", "Magnesium", "Manganese",
+                    "Sodium", "Phosphorus", "Sulfur", "Zinc",
+                    "Ytrium"]
+attribute_types = ["INTEGER REFERENCES Samples (ID)", "INTEGER REFERENCES Units (ID)", "INTEGER REFERENCES Instruments (ID)",
+                   "FLOAT", "FLOAT", "FLOAT", "FLOAT",
+                   "FLOAT", "FLOAT", "FLOAT", "FLOAT",
+                   "FLOAT", "FLOAT", "FLOAT", "FLOAT",
+                   "FLOAT"]
 tb = tables.Tables(DB)
-tb.add_Table("Fields", attributes, attribute_types)
+tb.add_Table("ICP-OES", attributes, attribute_types)
 
 #######################################################################
 """
 
-# attributes = ["[Sample ID]", "[Unit ID]", "[Instrument ID]", 
-#               "[Nitrate/Nitrite]", "Ammonium", "Phosphorus"]
-# attribute_types = ["INTEGER REFERENCES Samples (ID)", "INTEGER REFERENCES Units (ID)", "INTEGER REFERENCES Instruments (ID)",
-#                    "FLOAT", "FLOAT", "FLOAT"]
+# attributes = ["Make", "Model", "Lab Name", "Serial Number"]
+# attribute_types = ["TEXT", "TEXT", "TEXT", "INTEGER"]
 # tb = tables.Tables(DB)
-# tb.add_Table("[CFA Nutrients]", attributes, attribute_types)
+# tb.add_Table("Lab Instruments", attributes, attribute_types)
 
 
 """
@@ -178,7 +182,7 @@ tb.delete_Table(["Field Boundaries"])
 """
 
 # tb = tables.Tables(DB)
-# tb.delete_Table(["[Continious Flow Analysis]"])
+# tb.delete_Table(["ICP-OES"])
 
 
 """
@@ -297,5 +301,5 @@ dat.add_record("Lab Instruments", names, ["Agilent", "ICP-OES", "Temple"])
 
 # dat = data.add_data(DB)
 # columns = tables.Tables(DB)
-# names = columns.retrieve_names("[Lab Instruments]")
-# dat.add_record("[Lab Instruments]", names, ["Agilent", "ICP-OES", "Temple"])
+# names = columns.retrieve_names("Lab Instruments")
+# dat.add_record("Lab Instruments", names, ["Agilent", "ICP-OES", "Soil Hydrology", "NaN"])
