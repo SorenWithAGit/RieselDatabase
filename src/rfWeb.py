@@ -80,6 +80,17 @@ class read_web_files:
         daily_df["Cumulative Precip (in)"] = daily_df["Precip (in)"].cumsum()
         print(daily_df)
 
+
+                # create new dataframe with daily values
+        monthly_df = rain_df.groupby([
+            rain_df["Date"].dt.year,
+            rain_df["Date"].dt.month
+        ]).last().reset_index(drop = True)
+        monthly_df = monthly_df.iloc[:, [0, 1]]
+        monthly_df["Monthly Precip (in)"] = daily_df["Precip (in)"].cumsum()
+        monthly_df["Cumulative Precip (in)"] = monthly_df["Monthly Precip (in)"].cumsum()
+        print(monthly_df)
+
     
 rwb = read_web_files
 rwb.read_precip(r"C:\Users\john.sorensen\Documents\rg2a60.web")
