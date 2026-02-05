@@ -61,6 +61,7 @@ class read_web_files:
         rain_df["Date"] = dates
         rain_df["Time (min)"] = time
         rain_df["Precip (in)"] = precip
+        rain_df["Precip (in)"] = rain_df["Precip (in)"].astype("float")
 
 
         # print(rain_df)
@@ -79,15 +80,22 @@ class read_web_files:
         daily_df["Precip (in)"] = daily_df["Precip (in)"].astype("float")
         daily_df["Cumulative Precip (in)"] = daily_df["Precip (in)"].cumsum()
         print(daily_df)
+        print(sum(daily_df["Precip (in)"]))
 
 
-                # create new dataframe with daily values
-        monthly_df = rain_df.groupby([
-            rain_df["Date"].dt.year,
-            rain_df["Date"].dt.month
+
+        
+        buffer_df = daily_df
+        buffer_df = buffer_df.set_index(buffer_df["Date"])
+        buffer_df["Monthly Precip (in)"] = buffer_df.groupby([buffer_df.index.year, buffer_df.index.month])["Precip (in)"].cumsum()
+        # print(buffer_df)
+
+        # create new dataframe with daily values
+        monthly_df = buffer_df.groupby([
+            buffer_df["Date"].dt.year,
+            buffer_df["Date"].dt.month
         ]).last().reset_index(drop = True)
-        monthly_df = monthly_df.iloc[:, [0, 1]]
-        monthly_df["Monthly Precip (in)"] = daily_df["Precip (in)"].cumsum()
+        monthly_df = monthly_df.iloc[:, [0, 1, 5]]
         monthly_df["Cumulative Precip (in)"] = monthly_df["Monthly Precip (in)"].cumsum()
         print(monthly_df)
 
