@@ -1,3 +1,24 @@
+"""
+########################################################################
+
+This module is designed to open and convert the web files for the Riesel
+dataset.
+The class read_web_files contains the following functions:
+
+read_precip
+Which takes a file path leading to the precipitation web files as a str
+and converts it to a csv and then into three dataframes:
+Dataframe containing all Data,
+Dataframe containing daily data with a cumulutative sum.
+
+Part of this code was devoloped by Chris Grisham.
+Further devoloped by John Sorensen.
+
+########################################################################
+ """
+
+
+
 import pandas as pd
 import csv
 
@@ -46,15 +67,19 @@ class read_web_files:
 
         # convert date column to datetime
         rain_df["Date"] = pd.to_datetime(rain_df["Date"])
+        print(rain_df)
 
 
-        # create new dataframe with last date and time entries
-        last_day_df = rain_df.groupby([
+        # create new dataframe with daily values
+        daily_df = rain_df.groupby([
             rain_df["Date"].dt.year,
-            rain_df["Date"].dt.month
+            rain_df["Date"].dt.month,
+            rain_df["Date"].dt.day
         ]).last().reset_index(drop = True)
-        print(last_day_df)
-        return(last_day_df)
+        daily_df["Precip (in)"] = daily_df["Precip (in)"].astype("float")
+        daily_df["Cumulative Precip (in)"] = daily_df["Precip (in)"].cumsum()
+        print(daily_df)
+
     
 rwb = read_web_files
 rwb.read_precip(r"C:\Users\john.sorensen\Documents\rg2a60.web")
