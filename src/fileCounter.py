@@ -15,7 +15,7 @@ def count_file_types(root_directory):
 
     return dict(file_type_count)
 
-root_directory = r"\\ARS-DATA\Archive\HarmelExit\riesel"
+root_directory = input("root directory: ")
 
 file_counts = count_file_types(root_directory)
 for ext, count in file_counts.items():
