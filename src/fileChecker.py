@@ -4,7 +4,8 @@ import glob
 
 
 class files:
-
+    
+    # collect list of file paths and file names from root folders
     def get_files(root_folder: str, file_identifier):
         # Collect file paths and file names
         file_paths = glob.glob(root_folder + "//" + file_identifier)
@@ -18,6 +19,7 @@ class files:
 
 class read_excel:
 
+    # read weather data files
     def read_weather(filepath: str):
         # define headers
         headers = ["mo", "day", "year", "Max Temp (C)", "Min Temp (C)", "Precip (mm)"]
@@ -34,6 +36,7 @@ class read_excel:
 
 class file_checker:
     
+    # compare weather data files from Harmel and Umbraco Website
     def check_weather_files(file1: str, file2: str, df1: pd.DataFrame, df2: pd.DataFrame):
         # collect file name from path
         fn1 = os.path.basename(file1).split("/")[-1]
