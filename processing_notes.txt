@@ -1,14 +1,32 @@
 
 Harmel Data Navigation
 
+                            Precipitation
+########################################################################
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\precipitation\subdailyprecip
+
+Folder contains folders containing .WEB files for precipitation.
+
+rfWeb.py
+Code was developed to convert the .WEB files to csv and then into a 
+pandas dataframe. As of Friday February 6, 2026: tested code on a small
+subset of data. 
+Needs further testing.
+
+########################################################################
+
+
                             Daily weather
 ########################################################################
 \\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather
 
 Folder contains excel files for daily weather from 1940 to 2008
+
+file_checker.py
 Code was devoloped to open these files and compare them to the 
 weather files that were found in:
 \\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
+
 The files were identical apart from the Umbraco folder contained
 additional daily weather files, 2009 to 2019.
 
@@ -21,16 +39,19 @@ additional daily weather files, 2009 to 2019.
 
 Folder contains excel files that can be seperated into two
 categories: those starting with 32-(year) and those starting with
-(year)ries. 
+(year)ries. Apart from a loan file (PANevapcalc) which is a partial
+year of 1949.
 The 32 files are daily measurements of the evaporation pan 
 measured by Gary Hoeft.
 THe (year)ries files are daily weather files with the evaporation pan
-measurements in the last few columns. The weather values were identical
-to the daily weather files for 2010 to 2015 found in the files located:
+measurements in the last few columns. The weather values appear to be 
+identical to the daily weather files for 2010 to 2015 found in the 
+files located:
 \\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
-However the UmbracoWebsite files did not have the evaporation pan 
-measurements.
+The evaporation pan mesurements are not included in the UmbracoWebsite
+files until 2012.
 
+file_checker.py
 An additional function was coded to open and extract data of the 32
 form of evaporation pan measurements.
 
