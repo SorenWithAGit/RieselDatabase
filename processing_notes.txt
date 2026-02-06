@@ -1,0 +1,37 @@
+
+Harmel Data Navigation
+
+                            Daily weather
+########################################################################
+\\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather
+
+Folder contains excel files for daily weather from 1940 to 2008
+Code was devoloped to open these files and compare them to the 
+weather files that were found in:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
+The files were identical apart from the Umbraco folder contained
+additional daily weather files, 2009 to 2019.
+
+########################################################################
+
+
+                        Evaporation Pan files
+########################################################################
+\\ARS-DATA\Archive\HarmelExit\riesel\weather\evappan
+
+Folder contains excel files that can be seperated into two
+categories: those starting with 32-(year) and those starting with
+(year)ries. 
+The 32 files are daily measurements of the evaporation pan 
+measured by Gary Hoeft.
+THe (year)ries files are daily weather files with the evaporation pan
+measurements in the last few columns. The weather values were identical
+to the daily weather files for 2010 to 2015 found in the files located:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
+However the UmbracoWebsite files did not have the evaporation pan 
+measurements.
+
+An additional function was coded to open and extract data of the 32
+form of evaporation pan measurements.
+
+########################################################################
