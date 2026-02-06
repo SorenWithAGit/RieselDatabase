@@ -3,6 +3,18 @@ import os
 import glob
 
 
+class files:
+
+    def get_files(root_folder: str):
+        file_paths = glob.glob(root_folder + "//" + "*ries.xls")
+        files = []
+        for path in file_paths:
+            file = os.path.basename(path).split("/")[-1]
+            files.append(file)
+        return file_paths, files
+
+
+
 class read_excel:
 
     def read_weather(filepath: str):
@@ -33,24 +45,19 @@ class file_checker:
             print("Harmel: " + fn2 + " is not identical to Umbraco: " + fn2)
 
 folder1 = r"\\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather"
-folder2 = r"I:\programming\python\riesel_file_checker\Umbraco Website Files"
+folder2 = r"I:\programming\python\riesel_file_checker\Umbraco Website Files\Weather Files"
 
-# collect paths from 1st and 2nd directories
-path1 = glob.glob(folder1 + "//" + "*ries.xls")
-path2 = glob.glob(folder2 + "//" + "*ries.xls")
+f = files
+path1 = f.get_files(folder1)[0]
+files1 = f.get_files(folder1)[1]
+
+path2 = f.get_files(folder2)[0]
+files2 = f.get_files(folder2)[1]
 
 
-files1 = []
-files2 = []
+# for file in files2:
+#     print(file)
 
-# collect file names from paths
-for path in path1:
-    file = os.path.basename(path).split("/")[-1]
-    files1.append(file)
-
-for path in path2:
-    file = os.path.basename(path).split("/")[-1]
-    files2.append(file)
 
 # match file names of 2nd path to 1st
 files2 = [file for file in files1 if file in files2]
