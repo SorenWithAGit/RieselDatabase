@@ -5,8 +5,9 @@ import glob
 
 class files:
 
-    def get_files(root_folder: str):
-        file_paths = glob.glob(root_folder + "//" + "*ries.xls")
+    def get_files(root_folder: str, file_identifier):
+        # Collect file paths and file names
+        file_paths = glob.glob(root_folder + "//" + file_identifier)
         files = []
         for path in file_paths:
             file = os.path.basename(path).split("/")[-1]
@@ -44,15 +45,18 @@ class file_checker:
         else:
             print("Harmel: " + fn2 + " is not identical to Umbraco: " + fn2)
 
+
+# Path to folders and file type to compare
 folder1 = r"\\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather"
 folder2 = r"I:\programming\python\riesel_file_checker\Umbraco Website Files\Weather Files"
+file_idenifier = "*ries.xls"
 
 f = files
-path1 = f.get_files(folder1)[0]
-files1 = f.get_files(folder1)[1]
+path1 = f.get_files(folder1, file_idenifier)[0]
+files1 = f.get_files(folder1, file_idenifier)[1]
 
-path2 = f.get_files(folder2)[0]
-files2 = f.get_files(folder2)[1]
+path2 = f.get_files(folder2, file_idenifier)[0]
+files2 = f.get_files(folder2, file_idenifier)[1]
 
 
 # for file in files2:
