@@ -6,7 +6,7 @@ import glob
 class files:
     
     # collect list of file paths and file names from root folders
-    def get_files(root_folder: str, file_identifier):
+    def get_files(root_folder: str, file_identifier: str):
         # Collect file paths and file names
         file_paths = glob.glob(root_folder + "//" + file_identifier)
         files = []
@@ -33,6 +33,22 @@ class read_excel:
         df = df.rename(columns = column_dict)
         df = df.reset_index(drop = True)
         return df
+    
+
+    def read_evappan(filepath: str):
+        headers = ["year", "month", "day", "Hook Gauge (in)", "After fill (in)", "Precipitation (in)", "Calculated Evaporation (in)"]
+        # read excel data into pandas dataframe and isolate data
+        df = pd.read_excel(filepath)
+        df = df.drop(index = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        df = df.iloc[:,[2, 3, 4, 5, 6, 7, 8]]
+        df_columns = df.columns.tolist()
+        column_dict = dict(zip(df_columns, headers))
+        df = df.rename(columns = column_dict)
+        df = df.reset_index(drop = True)
+        df["Date"] = pd.to_datetime(df[["year", "month", "day"]])
+        df = df.iloc[:, [7, 3, 4, 5, 6]]
+        return df
+
 
 class file_checker:
     
@@ -48,38 +64,56 @@ class file_checker:
         else:
             print("Harmel: " + fn2 + " is not identical to Umbraco: " + fn2)
 
+########################################################################
 
-# Path to folders and file type to compare
-folder1 = r"\\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather"
-folder2 = r"I:\programming\python\riesel_file_checker\Umbraco Website Files\Weather Files"
-file_idenifier = "*ries.xls"
 
+# # Path to folders and file type to compare
+# folder1 = r"\\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather"
+# folder2 = r"I:\programming\python\riesel_file_checker\Umbraco Website Files\Weather Files"
+# file_idenifier = "*ries.xls"
+
+# f = files
+# path1 = f.get_files(folder1, file_idenifier)[0]
+# files1 = f.get_files(folder1, file_idenifier)[1]
+
+# path2 = f.get_files(folder2, file_idenifier)[0]
+# files2 = f.get_files(folder2, file_idenifier)[1]
+
+
+# # for file in files2:
+# #     print(file)
+
+
+# # match file names of 2nd path to 1st
+# files2 = [file for file in files1 if file in files2]
+
+# if files1 == files2:
+#         for p, path in enumerate(path1):
+#             re = read_excel
+#             f1 = re.read_weather(path)
+#             # print("Harmel File: ")
+#             # print(f1)
+#             f2 = re.read_weather(path2[p])
+#             # print("Umbraco Website File: ")
+#             # print(f2)
+
+#             fc = file_checker
+#             fc.check_weather_files(path, path2[p], f1, f2)
+
+
+########################################################################
+
+
+########################################################################
+
+
+folder_path = r"I:\programming\python\riesel_file_checker\Harmel Evappan"
 f = files
-path1 = f.get_files(folder1, file_idenifier)[0]
-files1 = f.get_files(folder1, file_idenifier)[1]
+fp = f.get_files(folder_path, "32*")[0]
+fn = f.get_files(folder_path, "32*")[1]
 
-path2 = f.get_files(folder2, file_idenifier)[0]
-files2 = f.get_files(folder2, file_idenifier)[1]
-
-
-# for file in files2:
-#     print(file)
-
-
-# match file names of 2nd path to 1st
-files2 = [file for file in files1 if file in files2]
-
-if files1 == files2:
-    print("files match")
-
-for p, path in enumerate(path1):
-    re = read_excel
-    f1 = re.read_weather(path)
-    # print("Harmel File: ")
-    # print(f1)
-    f2 = re.read_weather(path2[p])
-    # print("Umbraco Website File: ")
-    # print(f2)
-
-    fc = file_checker
-    fc.check_weather_files(path, path2[p], f1, f2)
+for path in fp:
+    # print(path)
+    r = read_excel
+    rEV = r.read_evappan(path)
+    print(rEV)
