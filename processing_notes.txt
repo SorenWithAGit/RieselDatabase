@@ -7,11 +7,24 @@ Harmel Data Navigation
 
 Folder contains folders containing .WEB files for precipitation.
 
-rfWeb.py
+read_files.py
 Code was developed to convert the .WEB files to csv and then into a 
-pandas dataframe. As of Friday February 6, 2026: tested code on a small
-subset of data. 
-Needs further testing.
+pandas dataframe. As of Friday February 6, 2026: tested code on a all
+subdailyprecip folders, functions successfully.
+
+Code was developed to read the .txt precipitation values into a 
+pandas dataframe. In Harmel folder rw9web rgw905.txt several years
+were incorrect. Manually converted the years to the matching 2005.
+Ran read_txt.read_precip() on several folders in subdailyprecip
+successfully.
+
+It appears that the web files are stored in both folders and raw web
+files located:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel
+There are additional fields that are not in Harmel 
+precipitation\subdailyprecip.
+
+
 
 ########################################################################
 
@@ -22,12 +35,12 @@ Needs further testing.
 
 Folder contains excel files for daily weather from 1940 to 2008
 
-file_checker.py
+read_files.py
 Code was devoloped to open these files and compare them to the 
 weather files that were found in:
 \\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
 
-The files were identical apart from the Umbraco folder contained
+The files were identical apart from the Umbraco folder containing
 additional daily weather files, 2009 to 2019.
 
 ########################################################################
@@ -41,8 +54,10 @@ Folder contains excel files that can be seperated into two
 categories: those starting with 32-(year) and those starting with
 (year)ries. Apart from a loan file (PANevapcalc) which is a partial
 year of 1949.
+
 The 32 files are daily measurements of the evaporation pan 
 measured by Gary Hoeft.
+
 THe (year)ries files are daily weather files with the evaporation pan
 measurements in the last few columns. The weather values appear to be 
 identical to the daily weather files for 2010 to 2015 found in the 
@@ -51,8 +66,45 @@ files located:
 The evaporation pan mesurements are not included in the UmbracoWebsite
 files until 2012.
 
-file_checker.py
+read_files.py
 An additional function was coded to open and extract data of the 32
 form of evaporation pan measurements.
+
+########################################################################
+
+
+                            Runoff files
+########################################################################
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\runoff\subdailyrunoff
+
+Folder contains compressed zip folders, each containing subdaily runoff
+files for the Watersheds. Data is categorized by:
+Watershed
+month
+day
+year
+time (min)
+runoff (cfs)
+runoff (in/hr))
+There are two file types for the runoff files:
+1. .web files
+2. .txt files
+
+read_files.py
+Code was developed to open the .web and .txt files and read the data
+into a pandas dataframe.
+
+\\ARS-DATA\Archive\UmbracoWebsite
+contains some of the runoff data but not all found in Harmel.
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Runoff - Subdaily
+
+Folder contains the corresponding runoff data.
+
+Read through all runoff files in:
+I:\programming\python\riesel_file_checker\Harmel\Subdaily Runoff
+On Monday 02/09/2026
+
 
 ########################################################################
