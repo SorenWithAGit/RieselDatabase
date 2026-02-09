@@ -24,7 +24,10 @@ files located:
 There are additional fields that are not in Harmel 
 precipitation\subdailyprecip.
 
-
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Rainfall - Subdaily
+Contains subdaily precipitation data, some not found in Harmel
+or UmbracoWebsite.
+Ran read_files.py through UmbracoWebsite2 files. - 02/09/2026
 
 ########################################################################
 
@@ -42,6 +45,10 @@ weather files that were found in:
 
 The files were identical apart from the Umbraco folder containing
 additional daily weather files, 2009 to 2019.
+ 
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Daily Met
+Folder contains daily weather data from 1940 2020
+Ran read_files.py through UmbracoWebsite2. 02/09/2026
 
 ########################################################################
 
@@ -105,6 +112,29 @@ Folder contains the corresponding runoff data.
 Read through all runoff files in:
 I:\programming\python\riesel_file_checker\Harmel\Subdaily Runoff
 On Monday 02/09/2026
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Runoff - Subdaily
+Contains files with runoff data from the watersheds, some files are not
+in Harmel or UmbracoWebsite.
+Ran read_files.py through UmbracoWebsite2. 02/09/2026
+
+########################################################################
+
+
+                        Well Levels
+########################################################################
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Well Level
+There is a single Excel file containing well level measurements from
+2000 to 2020. I believe these were checked by Gary Hoeft multiple days
+a week. There is no matching data in Harmel.
+
+                        TO DO:
+Use Pandas to read the data in a dataframe that will be useable when
+it is time to import data into the DB.
+
+########################################################################
+
 
 
 ########################################################################
