@@ -335,7 +335,7 @@ class file_checker:
 
 ########################################################################
 
-
+                        # Read Evappan
 ########################################################################
 
 
@@ -354,41 +354,51 @@ class file_checker:
 ########################################################################
 
 
+                    # Read Precipitation .Web
 ########################################################################
 
+# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Runoff - Subdaily\*"
+# folder_list = glob.glob(root_folder, recursive = True)
 
-# root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Subdaily Precip\rw9web"
-# fls = files
-# filepaths = fls.get_files(root_folder, "*rg*.web")[0]
-# file_lst = fls.get_files(root_folder, "*rg*.web")[1]
+# for folder in folder_list:
+#     fls = files
+#     filepaths = fls.get_files(folder, "*.web")[0]
+#     file_lst = fls.get_files(folder, "*.web")[1]
 
-# for path in filepaths:
-#     read = read_web
-#     precip = read.read_precip(path)
-
-
-########################################################################
-
-
-########################################################################
-
-
-# root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Subdaily Precip\rw9web"
-# fls = files
-# filepaths = fls.get_files(root_folder, "*rg*.web")[0]
-# file_lst = fls.get_files(root_folder, "*rg*.web")[1]
-
-# for path in filepaths:
-#     read = read_txt
-#     precip = read.read_precip(path)
+#     for i, path in enumerate(filepaths):
+#         print(file_lst[i])
+#         read = read_web
+#         precip = read.read_precip(path)
 
 
 ########################################################################
 
 
+                    # Read Precipitation .txt
 ########################################################################
 
-# root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Subdaily Runoff\*"
+
+# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Rainfall - Subdaily\*"
+# folder_list = glob.glob(root_folder, recursive = True)
+
+# for folder in folder_list:
+#     fls = files
+#     filepaths = fls.get_files(folder, "*.txt")[0]
+#     file_lst = fls.get_files(folder, "*.txt")[1]
+
+#     for i, path in enumerate(filepaths):
+#         print(file_lst[i])
+#         read = read_txt
+#         precip = read.read_precip(path)
+
+
+########################################################################
+
+
+                        # Read Runoff .web
+########################################################################
+
+# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Rainfall - Subdaily\*"
 # folder_list = glob.glob(root_folder, recursive = True)
 
 # for folder in folder_list:
@@ -404,18 +414,25 @@ class file_checker:
 
 ########################################################################
 
-root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Subdaily Runoff\*"
+
+                       # Read Runoff .txt
+########################################################################
+
+root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Runoff - Subdaily\*"
 folder_list = glob.glob(root_folder, recursive = True)
 
+# file_count = 0
 for folder in folder_list:
     fls = files
-    filepaths = fls.get_files(root_folder, "*.txt")[0]
-    files_lst = fls.get_files(root_folder, "*.txt")[1]
+    filepaths = fls.get_files(folder, "*.txt")[0]
+    files_lst = fls.get_files(folder, "*.txt")[1]
 
     for i, path in enumerate(filepaths):
+        # file_count = i + 1
         print(files_lst[i])
         rt = read_txt
         rotxt = rt.read_runoff(path)
+# print(file_count)
 
 
 ########################################################################
