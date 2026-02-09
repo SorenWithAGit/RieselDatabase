@@ -119,8 +119,7 @@ class read_txt:
         monthly_df = monthly_df.iloc[:, [0, 1, 5]]
         monthly_df["Cumulative Precip (in)"] = monthly_df["Monthly Precip (in)"].cumsum()
         print(monthly_df)
-txt = read_txt
-f = txt.read_precip(r"I:\programming\python\riesel_file_checker\Harmel\Subdaily Precip\rw9web\rgw905.txt")
+
 
 class read_web:
 
@@ -282,3 +281,14 @@ class file_checker:
 
 
 ########################################################################
+
+
+########################################################################
+root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Subdaily Precip\rw9web"
+fls = files
+filepaths = fls.get_files(root_folder, "*rg*.web")[0]
+file_lst = fls.get_files(root_folder, "*rg*.web")[1]
+
+for path in filepaths:
+    read = read_txt
+    precip = read.read_precip(path)
