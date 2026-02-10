@@ -58,7 +58,16 @@ class read_txt:
         with open(filepath, "r") as file:
             for line in file:
                 rows.append(line.split())
-        rows = rows[2:]
+        if rows[1][-1] == "Rain(in)"  \
+            or rows[1][-1] == "(in)" \
+                and rows[2] != []:
+            rows = rows[2:]
+
+        elif rows[1][-1] == "Rain(in)" \
+            or rows[1][-1] == "(in)" \
+                and rows[2] == []:
+            rows = rows[3:]
+
         rain_df = pd.DataFrame(columns = ["Raingauge", "Date", "Time (min)", "Precip (in)"]).astype({"Raingauge" : str,
                                                                                                 "Date" : str,
                                                                                                 "Time (min)" : str,
@@ -161,6 +170,51 @@ class read_txt:
 
         print(runoff_df)
 
+    
+    def read_sediment(filepath: str):
+        rows = []
+        with open(filepath, "r") as file:
+            for line in file:
+                if len(line.split()) == 7 \
+                    and line.split()[1].isnumeric():
+                    rows.append(line.split())
+                
+
+        rows = rows[2:]
+
+        sed_df = pd.DataFrame(columns = ["Watershed", "Date", "Time (min)", "Sed conc (ppm)", 
+                                         "Sed amount (t/a)"]).astype(
+                                                                    {"Watershed" : str,
+                                                                    "Date" : str,
+                                                                    "Time (min)" : str,
+                                                                    "Sed conc (ppm)" : float,
+                                                                    "Sed amount (t/a)" : float})
+        
+        Waterhsed = []
+        dates = []
+        time = []
+        sedconc = []
+        sedamt = []
+
+        for row in rows:
+            # print(row)
+            Waterhsed.append(row[0])
+            date = str(row[1] + "/" + row[2]  + "/" + row[3])
+            dates.append(date)
+            time.append(row[4])
+            sedconc.append(row[5])
+            sedamt.append(row[6])
+        
+        sed_df["Watershed"] = Waterhsed
+        sed_df["Date"] = dates
+        sed_df["Time (min)"] = time
+        sed_df["Sed conc (ppm)"] = sedconc
+        sed_df["Sed amount (t/a)"] = sedamt
+
+        sed_df["Date"] = pd.to_datetime(sed_df["Date"])
+
+        print(sed_df)
+
 
 class read_web:
 
@@ -172,6 +226,9 @@ class read_web:
             csvread = csv.reader(csvconvert)
             for row in csvread:
                 rows.append(row[0].split())
+
+        # print("row 2: " + str(rows[1]))
+        # print("row 3: " + str(rows[2]))
         
         # create pandas dataframe and format columns
         rain_df = pd.DataFrame(columns = ["Raingauge", "Date", "Time (min)", "Precip (in)"]).astype({"Raingauge" : str,
@@ -186,7 +243,17 @@ class read_web:
         precip = []
 
         # from row append data to corresponding list
-        for row in rows[2:]:
+        if rows[1][-1] == "Rain(in)"  \
+            or rows[1][-1] == "(in)" \
+                and rows[2] != []:
+            rows = rows[2:]
+
+        elif rows[1][-1] == "Rain(in)" \
+            or rows[1][-1] == "(in)" \
+                and rows[2] == []:
+            rows = rows[3:]
+
+        for row in rows:
             # print(row)
             raingauge.append(row[0])
             date = str(row[1] + "/" + row[2]  + "/" + row[3])
@@ -298,6 +365,9 @@ class file_checker:
 
 ########################################################################
 
+                        # Read & Compare Weather
+########################################################################
+
 
 # # Path to folders and file type to compare
 # folder1 = r"I:\programming\python\riesel_file_checker\Harmel\dailyweather2009"
@@ -357,7 +427,8 @@ class file_checker:
                     # Read Precipitation .Web
 ########################################################################
 
-# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Runoff - Subdaily\*"
+
+# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Rainfall - Subdaily\*"
 # folder_list = glob.glob(root_folder, recursive = True)
 
 # for folder in folder_list:
@@ -418,21 +489,41 @@ class file_checker:
                        # Read Runoff .txt
 ########################################################################
 
-root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Runoff - Subdaily\*"
-folder_list = glob.glob(root_folder, recursive = True)
+# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Runoff - Subdaily\*"
+# folder_list = glob.glob(root_folder, recursive = True)
 
-# file_count = 0
-for folder in folder_list:
-    fls = files
-    filepaths = fls.get_files(folder, "*.txt")[0]
-    files_lst = fls.get_files(folder, "*.txt")[1]
+# # file_count = 0
+# for folder in folder_list:
+#     fls = files
+#     filepaths = fls.get_files(folder, "*.txt")[0]
+#     files_lst = fls.get_files(folder, "*.txt")[1]
 
-    for i, path in enumerate(filepaths):
-        # file_count = i + 1
-        print(files_lst[i])
-        rt = read_txt
-        rotxt = rt.read_runoff(path)
-# print(file_count)
+#     for i, path in enumerate(filepaths):
+#         # file_count = i + 1
+#         print(files_lst[i])
+#         rt = read_txt
+#         rotxt = rt.read_runoff(path)
+# # print(file_count)
+
+
+########################################################################
+
+
+                        # Sedementation
+########################################################################
+
+
+root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Sediment - Subdaily"
+
+
+fls = files
+filepaths = fls.get_files(root_folder, "*.txt")[0]
+file_lst = fls.get_files(root_folder, "*.txt")[1]
+
+for i, path in enumerate(filepaths):
+    print(file_lst[i])
+    read = read_txt
+    sed = read.read_sediment(path)
 
 
 ########################################################################
