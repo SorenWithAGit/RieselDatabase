@@ -136,5 +136,46 @@ it is time to import data into the DB.
 ########################################################################
 
 
+                            Sediment
+########################################################################
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\sediment\sedbrkpt2009.zip
+Folder contains files that the extensions must be converted to .txt 
+files. Files contain subdaily sedementation values.
+Columns:
+watershed, month, day, year, time, sed conc (ppm), sed amt (t/a)
+
+Data is found in:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel
+However the files are not grouped in folders
+
+Data also found in:
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Sediment - Subdaily
+The files are grouped together, but the file extensions must be 
+changed to .txt.
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\sediment\sedday2009.zip
+Folder contains files containing the bdaily sedimentation values,
+but the files must have the extensions converted to .txt.
+Columns:
+Watershed, month, day, year, sed amt (t/a)
+
+Data also found in:
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Sediment - Daily
+Many of the file extensions must be converted to .txt.
+
+read_files.py
+A function was added to read_files.py under the 
+class read_txt read_sedement.
+This function accepts the filepath as a parameter and will read through
+the file and add the data to a dataframe depending on whether it is 
+daily or subdaily data.
+
+Ran it through Harmel Daily and Subdaily data as well as UmbracoWebsite2
+Daily and Subdaily Data.
+
+########################################################################
+
+
 
 ########################################################################
