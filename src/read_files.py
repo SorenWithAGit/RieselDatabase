@@ -58,6 +58,8 @@ class read_txt:
         with open(filepath, "r") as file:
             for line in file:
                 rows.append(line.split())
+                
+        # logic to determine beginning row of data
         if rows[1][-1] == "Rain(in)"  \
             or rows[1][-1] == "(in)" \
                 and rows[2] != []:
@@ -172,46 +174,82 @@ class read_txt:
 
     
     def read_sediment(filepath: str):
+
+        # read rows of text files and append rows containing data
         rows = []
         with open(filepath, "r") as file:
             for line in file:
                 if len(line.split()) == 7 \
-                    and line.split()[1].isnumeric():
+                and line.split()[1].isnumeric():
                     rows.append(line.split())
+
+                elif len(line.split()) == 5 \
+                and line.split()[1].isnumeric():
+                    rows.append(line.split())
+                
                 
 
         rows = rows[2:]
 
-        sed_df = pd.DataFrame(columns = ["Watershed", "Date", "Time (min)", "Sed conc (ppm)", 
-                                         "Sed amount (t/a)"]).astype(
-                                                                    {"Watershed" : str,
-                                                                    "Date" : str,
-                                                                    "Time (min)" : str,
-                                                                    "Sed conc (ppm)" : float,
-                                                                    "Sed amount (t/a)" : float})
-        
-        Waterhsed = []
-        dates = []
-        time = []
-        sedconc = []
-        sedamt = []
+        # If sediment data is subdaily
+        if len(rows[0]) == 7:
 
-        for row in rows:
-            # print(row)
-            Waterhsed.append(row[0])
-            date = str(row[1] + "/" + row[2]  + "/" + row[3])
-            dates.append(date)
-            time.append(row[4])
-            sedconc.append(row[5])
-            sedamt.append(row[6])
-        
-        sed_df["Watershed"] = Waterhsed
-        sed_df["Date"] = dates
-        sed_df["Time (min)"] = time
-        sed_df["Sed conc (ppm)"] = sedconc
-        sed_df["Sed amount (t/a)"] = sedamt
+            sed_df = pd.DataFrame(columns = ["Watershed", "Date", "Time (min)", "Sed conc (ppm)", 
+                                            "Sed amount (t/a)"]).astype(
+                                                                        {"Watershed" : str,
+                                                                        "Date" : str,
+                                                                        "Time (min)" : str,
+                                                                        "Sed conc (ppm)" : float,
+                                                                        "Sed amount (t/a)" : float})
+            
+            Waterhsed = []
+            dates = []
+            time = []
+            sedconc = []
+            sedamt = []
 
-        sed_df["Date"] = pd.to_datetime(sed_df["Date"])
+            for row in rows:
+                # print(row)
+                Waterhsed.append(row[0])
+                date = str(row[1] + "/" + row[2]  + "/" + row[3])
+                dates.append(date)
+                time.append(row[4])
+                sedconc.append(row[5])
+                sedamt.append(row[6])
+            
+            sed_df["Watershed"] = Waterhsed
+            sed_df["Date"] = dates
+            sed_df["Time (min)"] = time
+            sed_df["Sed conc (ppm)"] = sedconc
+            sed_df["Sed amount (t/a)"] = sedamt
+
+            sed_df["Date"] = pd.to_datetime(sed_df["Date"])
+
+        # if sediment data is daily
+        elif len(rows[0]) == 5:
+
+            sed_df = pd.DataFrame(columns = ["Watershed", "Date", 
+                                            "Sed amount (t/a)"]).astype(
+                                                                        {"Watershed" : str,
+                                                                        "Date" : str,
+                                                                        "Sed amount (t/a)" : float})
+            
+            Waterhsed = []
+            dates = []
+            sedamt = []
+
+            for row in rows:
+                # print(row)
+                Waterhsed.append(row[0])
+                date = str(row[1] + "/" + row[2]  + "/" + row[3])
+                dates.append(date)
+                sedamt.append(row[4])
+            
+            sed_df["Watershed"] = Waterhsed
+            sed_df["Date"] = dates
+            sed_df["Sed amount (t/a)"] = sedamt
+
+            sed_df["Date"] = pd.to_datetime(sed_df["Date"])
 
         print(sed_df)
 
@@ -513,17 +551,17 @@ class file_checker:
 ########################################################################
 
 
-root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Sediment - Subdaily"
+# root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Sediment - Daily"
 
 
-fls = files
-filepaths = fls.get_files(root_folder, "*.txt")[0]
-file_lst = fls.get_files(root_folder, "*.txt")[1]
+# fls = files
+# filepaths = fls.get_files(root_folder, "*.txt")[0]
+# file_lst = fls.get_files(root_folder, "*.txt")[1]
 
-for i, path in enumerate(filepaths):
-    print(file_lst[i])
-    read = read_txt
-    sed = read.read_sediment(path)
+# for i, path in enumerate(filepaths):
+#     print(file_lst[i])
+#     read = read_txt
+#     sed = read.read_sediment(path)
 
 
 ########################################################################
