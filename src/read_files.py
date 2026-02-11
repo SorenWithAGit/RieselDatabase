@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import glob
 import csv
+from datetime import datetime
+import io
 
 
 class files:
@@ -52,6 +54,133 @@ class read_excel:
     
 
 class read_txt:
+
+    def read_hr_weather(filepath: str):
+        rows = []
+        with open(filepath, "r") as file:
+            for line in file:
+                rows.append(line.split())
+        
+        filtered_rows = [sublist for sublist in rows if sublist]
+
+        # for i, label in enumerate(column_labels):
+        #     print("row " + str(i) + " with len: " + str(len(label)))
+        #     print(label)
+
+        # TGAD, average air temp, units deg C
+        # TMAX, air temp max, units deg C
+        # TMIN, air temp min, units deg C
+        # RHMXD, relative humidity max daily, units %
+        # RHMUD, relative humidity min daily, units %
+        # VPRSD, vapor pressure average daily, units kPa
+        # SRAD, solar radiation, units MJ/m2 NEEDS CONVERSION
+        # WIND, wind speed average units km/d NEEDS CONVERSION
+        # WMAX, Wind max speed, units km/d NEEDS CONVERSION
+        # WINDDIR, Wind direction, units deg (daily average)
+        # STAVG, soil temp avg, units deg C
+        # STMAX, soil temp max, units deg C
+        # STMIN, soil temp min, units deg C
+        hrwthr = pd.DataFrame(columns = ["DOY", "HOUR", 
+                                         "TGAD", "TMAX", "TMIN",
+                                         "RHMXD", "RHUMD", "VPRSD",
+                                         "SRAD", "WIND", "WINDDIR", 
+                                         "WMAX", "RAIN", "STAVG", 
+                                         "STMAX", "STMIN"]).astype({
+                                             "DOY" : str,
+                                             "HOUR" : int,
+                                             "TGAD" : float,
+                                             "TMAX" : float,
+                                             "TMIN" : float,
+                                             "RHMXD" : float,
+                                             "RHUMD" : float,
+                                             "VPRSD" : float,
+                                             "SRAD" : float,
+                                             "WIND" : float,
+                                             "WINDDIR" : float,
+                                             "WMAX" : float,
+                                             "RAIN" : float,
+                                             "STAVG" : float,
+                                             "STMAX" : float,
+                                             "STMIN" : float
+                                         })
+        
+        dates = []
+        hours = []
+        avg_air = []
+        max_air = []
+        min_air = []
+        max_rh = []
+        min_rh=[]
+        vp = []
+        sr = []
+        avg_wind = []
+        avg_wind_dir = []
+        max_wind = []
+        precip = []
+        avg_soil = []
+        max_soil = []
+        min_soil = []
+
+        # print("length of row 1: " + str(len(rows[0])))
+        # print("length of row 3: " + str(len(rows[2])))
+
+        checkrows = []
+        checkrows.append(["row #", "Year", "Day", "hour",
+                          "AVG Air T", "Max Air T", "Min Air T", "Max RH",
+                          "Min RH", "Solar Rad", "AVG Wind", "Max Wind",
+                          "Wind Dir", "Precip", "AVG ST", "Max ST", "Min ST"])
+        if len(filtered_rows[0]) == 20 \
+        or len(filtered_rows[2]) == 16:
+            # print("file does not contain vp")
+            # for row in filtered_rows[3:6]:
+                # print("length of row: " + str(len(row)))
+                # print(row)
+
+            for i, row in enumerate(filtered_rows[3:]):
+                for value in row:
+                    try:
+                        num_float = float(value)
+                    except:
+                        row_count = i + 4
+                        check_row = row
+                        check_row.insert(0, row_count)
+                        checkrows.append(check_row)
+                        # print("row " + str(i + 4) + ":" + str(row))
+                        break
+        max_widths = [max(len(str(item)) for item in col) for col in zip(*checkrows)]
+        for row in checkrows:
+            formatted_row = " | ".join(f"{item:<{width}}" for item, width in zip(row, max_widths))
+            print(formatted_row)
+
+
+
+
+        # if len(filtered_rows[0]) == 29 \
+        # or len(filtered_rows[2]) == 12:
+        #     # print("file contains vp")
+        #     # for row in filtered_rows[3:6]:
+        #     #     print("length of row: " + str(len(row)))
+        #     #     print(row)
+
+
+        # hrwthr["Date"] = dates
+        # hrwthr["Hour"] = hours
+        # hrwthr["Avg air temp (C)"] = avg_air
+        # hrwthr["Max air temp (C)"] = max_air
+        # hrwthr["Min air temp (C)"] = min_air
+        # hrwthr["Max RH (%)"] = max_rh
+        # hrwthr["Min RH (%)"] = min_rh
+        # hrwthr["Avg vapor pressure (kPa)"] = vp
+        # hrwthr["Total solar radiation (kj/m2)"] = sr
+        # hrwthr["Avg wind speed (m/s)"] = avg_wind
+        # hrwthr["Avg wind direction (deg)"] = avg_wind_dir
+        # hrwthr["Max wind speed (m/s)"] = max_wind
+        # hrwthr["Total precip (mm)"] = precip
+        # hrwthr["Avg soil temp (C)"] = avg_soil
+        # hrwthr["Max soil temp (C)"] = max_soil
+        # hrwthr["Min soil temp (C)"] = min_soil
+
+        # print(hrwthr)
 
     def read_precip(filepath: str):
         rows = []
@@ -443,6 +572,24 @@ class file_checker:
 
 ########################################################################
 
+
+                    # Read Hourly Weather
+########################################################################
+
+root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Hourly Met"
+
+f = files
+fp = f.get_files(root_folder, "*.txt")[0]
+fn = f.get_files(root_folder, "*.txt")[1]
+
+for i, path in enumerate(fp):
+    print(fn[i])
+    rt = read_txt
+    dw = rt.read_hr_weather(path)
+
+########################################################################
+
+
                         # Read Evappan
 ########################################################################
 
@@ -562,6 +709,10 @@ class file_checker:
 #     print(file_lst[i])
 #     read = read_txt
 #     sed = read.read_sediment(path)
+
+
+########################################################################
+
 
 
 ########################################################################
