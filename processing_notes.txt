@@ -177,5 +177,40 @@ Daily and Subdaily Data.
 ########################################################################
 
 
+                            # Hourly weather
+########################################################################
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\weather\hourlyweather2009.zip
+
+The .txt files in these two folders are from 2001 - 2009.
+From 2001 - 2003 There is no vapor pressure data 
+From 2004 - 2009 Vapor pressure is added and headers differ from 01-03.
+
+Attempts were made to group the first 3 rows of the files to obtain
+the same headers.
+After discussions with supervisor it was determined that the ICASA 
+Data Standards would be used.
+The dataframe structure was coded accordingly.
+
+Upon further inspection of the data it was noticed that there are
+what appears to be extra values in the same columns which has thrown
+the next values in sequence off. 
+
+Code was developed to identify these errors and return the row # 
+corresponding to the row while viewed in VS Code.
+Further development was made to print the labels and row values
+in a orgainised fashion.
+
+                        TO DO:
+Further code must be devoloped to include a determined number of rows
+prior and after the odd row had occured. 
+Once obtained the data will be analyzed to determine where the errors
+occur.                        
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Hourly Met
+
+########################################################################
+
+
 
 ########################################################################
