@@ -104,31 +104,34 @@ class read_txt:
                                              "STMIN" : float
                                          })
         
-        dates = []
-        hours = []
-        avg_air = []
-        max_air = []
-        min_air = []
-        max_rh = []
-        min_rh=[]
-        vp = []
-        sr = []
-        avg_wind = []
-        avg_wind_dir = []
-        max_wind = []
-        precip = []
-        avg_soil = []
-        max_soil = []
-        min_soil = []
+        # dates = []
+        # hours = []
+        # avg_air = []
+        # max_air = []
+        # min_air = []
+        # max_rh = []
+        # min_rh=[]
+        # vp = []
+        # sr = []
+        # avg_wind = []
+        # avg_wind_dir = []
+        # max_wind = []
+        # precip = []
+        # avg_soil = []
+        # max_soil = []
+        # min_soil = []
 
         # print("length of row 1: " + str(len(rows[0])))
         # print("length of row 3: " + str(len(rows[2])))
 
         checkrows = []
-        checkrows.append(["row #", "Year", "Day", "hour",
-                          "AVG Air T", "Max Air T", "Min Air T", "Max RH",
-                          "Min RH", "Solar Rad", "AVG Wind", "Max Wind",
-                          "Wind Dir", "Precip", "AVG ST", "Max ST", "Min ST"])
+        prev_rows = []
+        next_rows = []
+        
+        prev_line_n = []
+        check_line_n = []
+        next_line_n = []
+
         if len(filtered_rows[0]) == 20 \
         or len(filtered_rows[2]) == 16:
             # print("file does not contain vp")
@@ -141,46 +144,268 @@ class read_txt:
                     try:
                         num_float = float(value)
                     except:
-                        row_count = i + 4
-                        check_row = row
-                        check_row.insert(0, row_count)
-                        checkrows.append(check_row)
-                        # print("row " + str(i + 4) + ":" + str(row))
+                        prev_row_n = i + 2
+                        prev_row = filtered_rows[prev_row_n]
+                        prev_line_n.append(prev_row_n + 1)
+                        prev_rows.append(prev_row)
+                        # prev_line_n.append(prev_row_n + 1)
+                        # print(prev_row)
                         break
-        max_widths = [max(len(str(item)) for item in col) for col in zip(*checkrows)]
-        for row in checkrows:
-            formatted_row = " | ".join(f"{item:<{width}}" for item, width in zip(row, max_widths))
-            print(formatted_row)
+            prev_df = pd.DataFrame(prev_rows, columns = 
+                                   ["YEAR", "Day", "HOUR", 
+                                    "TGAD", "TMAX", "TMIN",
+                                    "RHMXD", "RHUMD",
+                                    "SRAD", "WIND", "WINDDIR", 
+                                    "WMAX", "RAIN", "STAVG", 
+                                    "STMAX", "STMIN"]
+            )
+            prev_df.index = prev_line_n
+            # print(prev_df)
+            # print("\n")
+
+            for ic, row in enumerate(filtered_rows[3:]):
+                for value in row:
+                    try:
+                        num_float = float(value)
+                    except:
+                        row_count = ic + 4
+                        check_row = row
+                        check_line_n.append(row_count)
+                        checkrows.append(check_row)
+                        # print(check_row)
+                        break
+
+            check_df = pd.DataFrame(checkrows, columns = 
+                                   ["YEAR", "Day", "HOUR", 
+                                    "TGAD", "TMAX", "TMIN",
+                                    "RHMXD", "RHUMD",
+                                    "SRAD", "WIND", "WINDDIR", 
+                                    "WMAX", "RAIN", "STAVG", 
+                                    "STMAX", "STMIN"]
+            )
+            check_df.index = check_line_n
+            # print(check_df)
+            # print("\n")
+
+            for ir, row in enumerate(filtered_rows[3:]):
+                for value in row:
+                    try:
+                        num_float = float(value)
+                    except:
+                        next_row_n = ir + 4
+                        next_row = filtered_rows[next_row_n]
+                        next_line_n.append(next_row_n + 1)
+                        next_rows.append(next_row)
+                        # print(next_row)
+                        break
+            next_df = pd.DataFrame(next_rows, columns = 
+                                   ["YEAR", "Day", "HOUR", 
+                                    "TGAD", "TMAX", "TMIN",
+                                    "RHMXD", "RHUMD",
+                                    "SRAD", "WIND", "WINDDIR", 
+                                    "WMAX", "RAIN", "STAVG", 
+                                    "STMAX", "STMIN"]
+            )
+            next_df.index = next_line_n
+            # print(next_df)
+            # print("\n")
+            prev_mark = []
+            prev_mask = ~prev_df.index.isin(check_df.index)
+            prev_df_filter = prev_df[prev_mask]
+            for i in prev_df_filter.index:
+                prev_df_filter.loc[i, "Marker"] = "Before Check"
+            # print(prev_df_filter)
+
+            # print("\n")
+
+            check_mark = []
+            for i in check_df.index:
+                check_df.loc[i, "Marker"] = "Check"
+            # print(check_df)
+
+            # print("\n")
+
+            next_mask = ~next_df.index.isin(check_df.index)
+            next_df_filter = next_df[next_mask]
+            next_mark = []
+            for i in next_df_filter.index:
+                next_df_filter.loc[i, "Marker"] = "After Check"
+            # print(next_df_filter)
+
+            print("\n")
+
+            merged_df = pd.concat([prev_df_filter, check_df, next_df_filter]).sort_index()
+            dates = []
+            years = merged_df["YEAR"].tolist()
+            days = merged_df["Day"].tolist()
+            for d, year in enumerate(years):
+                year = year
+                day = days[d]
+                julian_string = str(year + day)
+                date = datetime.strptime(julian_string, '%Y%j').date()
+                dates.append(date)
+            merged_df["DOY"] = dates
+            cols = list(merged_df.columns)
+            new_order = [cols[-1]] + cols[:-1]
+            merged_df = merged_df[new_order]
+            print(merged_df.to_string(col_space = 15))
+
+            print("\n")
 
 
+        elif len(filtered_rows[0]) == 29 \
+        or len(filtered_rows[2]) == 12:
+            
+            columns2 = ["YEAR", "Day", "HOUR", 
+                        "TGAD", "TMAX", "TMIN",
+                        "RHMXD", "RHUMD", "VPRSD",
+                        "SRAD", "WIND", "WINDDIR", 
+                        "WMAX", "RAIN", "STAVG", 
+                        "STMAX", "STMIN"]
+            new_rows = []
+            check_rows = []
+            index = []
+            for i, row in enumerate(filtered_rows[3:]):
+                # print("row #: " + str(i + 4))
+                if len(row) == 17:
+                    new_rows.append(row)
+                    index.append(i + 4)
 
+                elif len(row) < 17:
+                    check_rows.append(row)
+                    print("Check row #: " + str(i + 4))
 
-        # if len(filtered_rows[0]) == 29 \
-        # or len(filtered_rows[2]) == 12:
-        #     # print("file contains vp")
-        #     # for row in filtered_rows[3:6]:
-        #     #     print("length of row: " + str(len(row)))
-        #     #     print(row)
+                elif len(row) > 17:
+                    check_rows.append(row)
+                    print("Check row #: " + str(i + 4))
 
+            for row in new_rows:
+                for val in row:
+                    if val == "na":
+                        val.replace("na", "nan")
 
-        # hrwthr["Date"] = dates
-        # hrwthr["Hour"] = hours
-        # hrwthr["Avg air temp (C)"] = avg_air
-        # hrwthr["Max air temp (C)"] = max_air
-        # hrwthr["Min air temp (C)"] = min_air
-        # hrwthr["Max RH (%)"] = max_rh
-        # hrwthr["Min RH (%)"] = min_rh
-        # hrwthr["Avg vapor pressure (kPa)"] = vp
-        # hrwthr["Total solar radiation (kj/m2)"] = sr
-        # hrwthr["Avg wind speed (m/s)"] = avg_wind
-        # hrwthr["Avg wind direction (deg)"] = avg_wind_dir
-        # hrwthr["Max wind speed (m/s)"] = max_wind
-        # hrwthr["Total precip (mm)"] = precip
-        # hrwthr["Avg soil temp (C)"] = avg_soil
-        # hrwthr["Max soil temp (C)"] = max_soil
-        # hrwthr["Min soil temp (C)"] = min_soil
+            print("\n")
+            df = pd.DataFrame(new_rows, columns = columns2).astype({
+                "YEAR" : int, "Day" : int, "HOUR" : int,
+                "RHMXD" : float, "RHUMD" : float, "VPRSD" : float,
+                "SRAD" : float, "WIND" : float, "WINDDIR" : float,
+                "WMAX" : float, "RAIN" : float, "STAVG" : float,
+                "STMAX" : float, "STMIN" : float
+            })
 
-        # print(hrwthr)
+            dates = []
+            dfyears = df["YEAR"].tolist()
+            dfdays = df["Day"].tolist()
+            for d, year in enumerate(dfyears):
+                str_year = str(year)
+                str_day = str(dfdays[d])
+                str_julian = str_year + str_day
+                date = datetime.strptime(str_julian, '%Y%j').date()
+                dates.append(date)
+            df["DOY"] = dates
+            df.index = index
+            dfcols = list(df.columns)
+            dfnew_order = [dfcols[-1]] + dfcols[:-1]
+            df = df[dfnew_order]
+            print(df)
+
+                
+
+                    
+            # for i, row in enumerate(filtered_rows[5:]):
+            #     while len(row) != 17:
+            #         row.insert(-1, "NaN")
+            #     print("row #: " + str(i + 4) + str(row))
+            #     for value in row:
+            #         try:
+            #             num_float = float(value)
+            #         except:
+            #             prev_row_n = i + 2
+            #             prev_row = filtered_rows[prev_row_n]
+            #             prev_line_n.append(prev_row_n + 1)
+            #             prev_rows.append(prev_row)
+            #             # prev_line_n.append(prev_row_n + 1)
+            #             # print(prev_row)
+            #             break
+            # prev_df = pd.DataFrame(prev_rows, columns = columns2)
+            # prev_df.index = prev_line_n
+            # # print(prev_df)
+            # # print("\n")
+
+            # for ic, row in enumerate(filtered_rows[3:]):
+            #     for value in row:
+            #         try:
+            #             num_float = float(value)
+            #         except:
+            #             row_count = ic + 4
+            #             check_row = row
+            #             check_line_n.append(row_count)
+            #             checkrows.append(check_row)
+            #             # print(check_row)
+            #             break
+
+            # check_df = pd.DataFrame(checkrows, columns = columns2)
+            # check_df.index = check_line_n
+            # # print(check_df)
+            # # print("\n")
+
+            # for ir, row in enumerate(filtered_rows[3:]):
+            #     for value in row:
+            #         try:
+            #             num_float = float(value)
+            #         except:
+            #             next_row_n = ir + 4
+            #             next_row = filtered_rows[next_row_n]
+            #             next_line_n.append(next_row_n + 1)
+            #             next_rows.append(next_row)
+            #             # print(next_row)
+            #             break
+            # next_df = pd.DataFrame(next_rows, columns = columns2)
+            # next_df.index = next_line_n
+            # # print(next_df)
+            # # print("\n")
+            # prev_mark = []
+            # prev_mask = ~prev_df.index.isin(check_df.index)
+            # prev_df_filter = prev_df[prev_mask]
+            # for i in prev_df_filter.index:
+            #     prev_df_filter.loc[i, "Marker"] = "Before Check"
+            # # print(prev_df_filter)
+
+            # # print("\n")
+
+            # check_mark = []
+            # for i in check_df.index:
+            #     check_df.loc[i, "Marker"] = "Check"
+            # # print(check_df)
+
+            # # print("\n")
+
+            # next_mask = ~next_df.index.isin(check_df.index)
+            # next_df_filter = next_df[next_mask]
+            # next_mark = []
+            # for i in next_df_filter.index:
+            #     next_df_filter.loc[i, "Marker"] = "After Check"
+            # # print(next_df_filter)
+
+            # print("\n")
+
+            # merged_df = pd.concat([prev_df_filter, check_df, next_df_filter]).sort_index()
+            # print(merged_df)
+            # dates = []
+            # years = merged_df["YEAR"].tolist()
+            # days = merged_df["Day"].tolist()
+            # for d, year in enumerate(years):
+            #     year = year
+            #     day = days[d]
+            #     julian_string = str(year + day)
+            #     date = datetime.strptime(julian_string, '%Y%j').date()
+            #     dates.append(date)
+            # merged_df["DOY"] = dates
+            # cols = list(merged_df.columns)
+            # new_order = [cols[-1]] + cols[:-1]
+            # merged_df = merged_df[new_order]
+            # print(merged_df.to_string(col_space = 15))
+
 
     def read_precip(filepath: str):
         rows = []
@@ -576,7 +801,7 @@ class file_checker:
                     # Read Hourly Weather
 ########################################################################
 
-root_folder = r"I:\programming\python\riesel_file_checker\Umbraco 2 Website Files\Hourly Met"
+root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Hourly weather"
 
 f = files
 fp = f.get_files(root_folder, "*.txt")[0]
