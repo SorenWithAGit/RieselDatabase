@@ -3,7 +3,7 @@ import os
 import glob
 import csv
 from datetime import datetime
-import io
+from pathlib import Path
 
 
 class files:
@@ -67,6 +67,7 @@ class read_txt:
         #     print("row " + str(i) + " with len: " + str(len(label)))
         #     print(label)
 
+                # Units for Columns
         # TGAD, average air temp, units deg C
         # TMAX, air temp max, units deg C
         # TMIN, air temp min, units deg C
@@ -80,6 +81,8 @@ class read_txt:
         # STAVG, soil temp avg, units deg C
         # STMAX, soil temp max, units deg C
         # STMIN, soil temp min, units deg C
+
+
         hrwthr = pd.DataFrame(columns = ["DOY", "HOUR", 
                                          "TGAD", "TMAX", "TMIN",
                                          "RHMXD", "RHUMD", "VPRSD",
@@ -132,6 +135,7 @@ class read_txt:
         check_line_n = []
         next_line_n = []
 
+        # filter years where barometer was not in use
         if len(filtered_rows[0]) == 20 \
         or len(filtered_rows[2]) == 16:
             # print("file does not contain vp")
@@ -139,6 +143,14 @@ class read_txt:
                 # print("length of row: " + str(len(row)))
                 # print(row)
 
+            columns1 = ["YEAR", "Day", "HOUR", 
+                        "TGAD", "TMAX", "TMIN",
+                        "RHMXD", "RHUMD",
+                        "SRAD", "WIND", "WINDDIR", 
+                        "WMAX", "RAIN", "STAVG", 
+                        "STMAX", "STMIN"]
+
+            # After finding error in values retrieve the row before
             for i, row in enumerate(filtered_rows[3:]):
                 for value in row:
                     try:
@@ -151,18 +163,12 @@ class read_txt:
                         # prev_line_n.append(prev_row_n + 1)
                         # print(prev_row)
                         break
-            prev_df = pd.DataFrame(prev_rows, columns = 
-                                   ["YEAR", "Day", "HOUR", 
-                                    "TGAD", "TMAX", "TMIN",
-                                    "RHMXD", "RHUMD",
-                                    "SRAD", "WIND", "WINDDIR", 
-                                    "WMAX", "RAIN", "STAVG", 
-                                    "STMAX", "STMIN"]
-            )
+            prev_df = pd.DataFrame(prev_rows, columns = columns1)
             prev_df.index = prev_line_n
             # print(prev_df)
             # print("\n")
 
+            # Create Dataframe rows containing value errors
             for ic, row in enumerate(filtered_rows[3:]):
                 for value in row:
                     try:
@@ -175,18 +181,12 @@ class read_txt:
                         # print(check_row)
                         break
 
-            check_df = pd.DataFrame(checkrows, columns = 
-                                   ["YEAR", "Day", "HOUR", 
-                                    "TGAD", "TMAX", "TMIN",
-                                    "RHMXD", "RHUMD",
-                                    "SRAD", "WIND", "WINDDIR", 
-                                    "WMAX", "RAIN", "STAVG", 
-                                    "STMAX", "STMIN"]
-            )
+            check_df = pd.DataFrame(checkrows, columns = columns1)
             check_df.index = check_line_n
             # print(check_df)
             # print("\n")
-
+            
+            # Create Dataframe of rows after checked row
             for ir, row in enumerate(filtered_rows[3:]):
                 for value in row:
                     try:
@@ -198,18 +198,12 @@ class read_txt:
                         next_rows.append(next_row)
                         # print(next_row)
                         break
-            next_df = pd.DataFrame(next_rows, columns = 
-                                   ["YEAR", "Day", "HOUR", 
-                                    "TGAD", "TMAX", "TMIN",
-                                    "RHMXD", "RHUMD",
-                                    "SRAD", "WIND", "WINDDIR", 
-                                    "WMAX", "RAIN", "STAVG", 
-                                    "STMAX", "STMIN"]
-            )
+            next_df = pd.DataFrame(next_rows, columns = columns1)
             next_df.index = next_line_n
             # print(next_df)
             # print("\n")
-            prev_mark = []
+
+            # filter rows that are also in check_df
             prev_mask = ~prev_df.index.isin(check_df.index)
             prev_df_filter = prev_df[prev_mask]
             for i in prev_df_filter.index:
@@ -218,13 +212,14 @@ class read_txt:
 
             # print("\n")
 
-            check_mark = []
+
             for i in check_df.index:
                 check_df.loc[i, "Marker"] = "Check"
             # print(check_df)
 
             # print("\n")
 
+            # filter out rows that are in check_df
             next_mask = ~next_df.index.isin(check_df.index)
             next_df_filter = next_df[next_mask]
             next_mark = []
@@ -234,6 +229,7 @@ class read_txt:
 
             print("\n")
 
+            # merge dataframes and add Dates
             merged_df = pd.concat([prev_df_filter, check_df, next_df_filter]).sort_index()
             dates = []
             years = merged_df["YEAR"].tolist()
@@ -248,6 +244,12 @@ class read_txt:
             cols = list(merged_df.columns)
             new_order = [cols[-1]] + cols[:-1]
             merged_df = merged_df[new_order]
+            
+            # output_file = Path(filepath).stem + "_check.csv"
+            # merged_df.to_csv(output_file)
+
+            # Print merged_df as string and print with spacing
+
             print(merged_df.to_string(col_space = 15))
 
             print("\n")
@@ -309,102 +311,6 @@ class read_txt:
             df = df[dfnew_order]
             print(df)
 
-                
-
-                    
-            # for i, row in enumerate(filtered_rows[5:]):
-            #     while len(row) != 17:
-            #         row.insert(-1, "NaN")
-            #     print("row #: " + str(i + 4) + str(row))
-            #     for value in row:
-            #         try:
-            #             num_float = float(value)
-            #         except:
-            #             prev_row_n = i + 2
-            #             prev_row = filtered_rows[prev_row_n]
-            #             prev_line_n.append(prev_row_n + 1)
-            #             prev_rows.append(prev_row)
-            #             # prev_line_n.append(prev_row_n + 1)
-            #             # print(prev_row)
-            #             break
-            # prev_df = pd.DataFrame(prev_rows, columns = columns2)
-            # prev_df.index = prev_line_n
-            # # print(prev_df)
-            # # print("\n")
-
-            # for ic, row in enumerate(filtered_rows[3:]):
-            #     for value in row:
-            #         try:
-            #             num_float = float(value)
-            #         except:
-            #             row_count = ic + 4
-            #             check_row = row
-            #             check_line_n.append(row_count)
-            #             checkrows.append(check_row)
-            #             # print(check_row)
-            #             break
-
-            # check_df = pd.DataFrame(checkrows, columns = columns2)
-            # check_df.index = check_line_n
-            # # print(check_df)
-            # # print("\n")
-
-            # for ir, row in enumerate(filtered_rows[3:]):
-            #     for value in row:
-            #         try:
-            #             num_float = float(value)
-            #         except:
-            #             next_row_n = ir + 4
-            #             next_row = filtered_rows[next_row_n]
-            #             next_line_n.append(next_row_n + 1)
-            #             next_rows.append(next_row)
-            #             # print(next_row)
-            #             break
-            # next_df = pd.DataFrame(next_rows, columns = columns2)
-            # next_df.index = next_line_n
-            # # print(next_df)
-            # # print("\n")
-            # prev_mark = []
-            # prev_mask = ~prev_df.index.isin(check_df.index)
-            # prev_df_filter = prev_df[prev_mask]
-            # for i in prev_df_filter.index:
-            #     prev_df_filter.loc[i, "Marker"] = "Before Check"
-            # # print(prev_df_filter)
-
-            # # print("\n")
-
-            # check_mark = []
-            # for i in check_df.index:
-            #     check_df.loc[i, "Marker"] = "Check"
-            # # print(check_df)
-
-            # # print("\n")
-
-            # next_mask = ~next_df.index.isin(check_df.index)
-            # next_df_filter = next_df[next_mask]
-            # next_mark = []
-            # for i in next_df_filter.index:
-            #     next_df_filter.loc[i, "Marker"] = "After Check"
-            # # print(next_df_filter)
-
-            # print("\n")
-
-            # merged_df = pd.concat([prev_df_filter, check_df, next_df_filter]).sort_index()
-            # print(merged_df)
-            # dates = []
-            # years = merged_df["YEAR"].tolist()
-            # days = merged_df["Day"].tolist()
-            # for d, year in enumerate(years):
-            #     year = year
-            #     day = days[d]
-            #     julian_string = str(year + day)
-            #     date = datetime.strptime(julian_string, '%Y%j').date()
-            #     dates.append(date)
-            # merged_df["DOY"] = dates
-            # cols = list(merged_df.columns)
-            # new_order = [cols[-1]] + cols[:-1]
-            # merged_df = merged_df[new_order]
-            # print(merged_df.to_string(col_space = 15))
 
 
     def read_precip(filepath: str):
