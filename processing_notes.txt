@@ -29,6 +29,8 @@ Contains subdaily precipitation data, some not found in Harmel
 or UmbracoWebsite.
 Ran read_files.py through UmbracoWebsite2 files. - 02/09/2026
 
+Precipitation files were read with developed code.
+
 ########################################################################
 
 
@@ -49,6 +51,8 @@ additional daily weather files, 2009 to 2019.
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Daily Met
 Folder contains daily weather data from 1940 2020
 Ran read_files.py through UmbracoWebsite2. 02/09/2026
+
+Daily weather files were read with developed code.
 
 ########################################################################
 
