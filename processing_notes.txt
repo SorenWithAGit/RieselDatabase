@@ -205,11 +205,46 @@ corresponding to the row while viewed in VS Code.
 Further development was made to print the labels and row values
 in a orgainised fashion.
 
+Code was developed to isolate the rows prior and after the occurance
+of the extra values for the 2001 - 2003 files.
+
+Code was developed to read the 2004 - 2009 files and identify errors
+in the values.
+
+By utilizing the length of a row as well as reading the values as 
+floats:
+for the 2004 - 2009 files -if there are extra values the row will be 
+appended to a list of check_values. If the rows are fine they will be 
+read into a pandas DataFrame.
+
+For the dataframes created from both files the index corresponds to 
+the index of the file when viewed with VS code.
+
+Navigating the .txt files has shown that there are times that sensors
+fail, mostly, the values will be -9999.00. Additional code will be
+developed to identify these occurances.
+
+                     Analysis of 2003
+Reviewing each row of data and comparing the previous and next row led
+to a trend appearing where RAIN contained a value of 1.00 and STMAX
+would have a double value. This trend does not apply to every entry
+a more in depth analysis will be provided.
+
+THe rows of data were modified by removing the 1.00 and moving the 
+values 1 cell left.While the modified RAIN value is still has an 
+inconsistent value while comparing to the previous and next rows.
+The STAVG | STMAX | STMIN values show more consistency. 
+A STAVG2 was calculated from the modified values and was compared to
+the STAVG if the data was modified.
+The STAVG2 was more inconsistent when the STMIN values were negative.
+It should be noted that the STAVG2 is calculated from the 
+STMAX and STMIN, whereas reported STAVG values were calculated from
+all the values within a day.
+
                         TO DO:
-Further code must be devoloped to include a determined number of rows
-prior and after the odd row had occured. 
-Once obtained the data will be analyzed to determine where the errors
-occur.                        
+Compare the modified data to the daily weather data files. 
+Examine the data from 2004 - 2009 files.
+Propose a plan of action for the data.
 
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Hourly Met
 
