@@ -4,6 +4,7 @@ import glob
 import csv
 from datetime import datetime
 from pathlib import Path
+import numpy as np
 
 
 class files:
@@ -149,6 +150,23 @@ class read_txt:
                         "SRAD", "WIND", "WINDDIR", 
                         "WMAX", "RAIN", "STAVG", 
                         "STMAX", "STMIN"]
+            
+            sensor_fails = []
+            
+            for i, row in enumerate(filtered_rows[3:]):
+                for value in row:
+                    if value == "na":
+                        break
+                    try:
+                        if float(value) == -99999.00\
+                        or float(value) == 99999.00:
+                            sensor_fails.append(row)
+                            break
+                    except:
+                        break
+
+            for row in sensor_fails:
+                print(row)
 
             # After finding error in values retrieve the row before
             for i, row in enumerate(filtered_rows[3:]):
@@ -244,14 +262,13 @@ class read_txt:
             cols = list(merged_df.columns)
             new_order = [cols[-1]] + cols[:-1]
             merged_df = merged_df[new_order]
-            
+
             # output_file = Path(filepath).stem + "_check.csv"
             # merged_df.to_csv(output_file)
 
             # Print merged_df as string and print with spacing
-
             print(merged_df.to_string(col_space = 15))
-
+                        
             print("\n")
 
 
@@ -259,11 +276,57 @@ class read_txt:
         or len(filtered_rows[2]) == 12:
             
             columns2 = ["YEAR", "Day", "HOUR", 
-                        "TGAD", "TMAX", "TMIN",
-                        "RHMXD", "RHUMD", "VPRSD",
-                        "SRAD", "WIND", "WINDDIR", 
-                        "WMAX", "RAIN", "STAVG", 
-                        "STMAX", "STMIN"]
+            "TGAD", "TMAX", "TMIN",
+            "RHMXD", "RHUMD", "VPRSD",
+            "SRAD", "WIND", "WINDDIR", 
+            "WMAX", "RAIN", "STAVG", 
+            "STMAX", "STMIN"]
+            
+            sensor_fails = []
+            senseor_f_ln = []
+            
+            for i, row in enumerate(filtered_rows[3:]):
+                if len(row) == 17:
+                    for value in row:
+                        if value == "na":
+                            break
+                        if float(value) == -99999.00 \
+                        or float(value) == 99999.00:
+                            sensor_fails.append(row)
+                            senseor_f_ln.append(i + 4)
+                            break
+                else:
+                    break
+            sf_df = pd.DataFrame(sensor_fails, columns = columns2)
+            sf_df.index = senseor_f_ln
+
+            dates = []
+            sfyears = sf_df["YEAR"].tolist()
+            sfdays = sf_df["Day"].tolist()
+            for d, year in enumerate(sfyears):
+                str_year = str(year)
+                str_day = str(sfdays[d])
+                str_julian = str_year + str_day
+                date = datetime.strptime(str_julian, '%Y%j').date()
+                dates.append(date)
+            sf_df["DOY"] = dates
+            sfcols = list(sf_df.columns)
+            sfnew_order = [sfcols[-1]] + sfcols[:-1]
+            sf_df = sf_df[sfnew_order]
+
+            print("Rows with Sensor Failures: " + str(len(sf_df.index)))
+
+            # cols = sf_df.columns
+            # for col in cols[4:]:
+            #     sf_df[col] = sf_df[col].astype(float)
+            #     sf_df[col] = sf_df[col].mask(sf_df[col] == -99999.00, np.nan)
+            #     sf_df[col] = sf_df[col].mask(sf_df[col] == 99999.00, np.nan)
+            # print(sf_df.dtypes)
+
+            print(sf_df)
+            
+            print("\n")
+    
             new_rows = []
             check_rows = []
             index = []
@@ -280,6 +343,7 @@ class read_txt:
                 elif len(row) > 17:
                     check_rows.append(row)
                     print("Check row #: " + str(i + 4))
+                    break
 
             for row in new_rows:
                 for val in row:
@@ -309,7 +373,17 @@ class read_txt:
             dfcols = list(df.columns)
             dfnew_order = [dfcols[-1]] + dfcols[:-1]
             df = df[dfnew_order]
+
+            colms = df.columns
+            for colm in colms[4:]:
+                df[colm] = df[colm].mask(df[colm] == -99999.00, np.nan)
+                df[colm] = df[colm].mask(df[colm] == 99999.00, np.nan)
+
+            # df = pd.concat([df, sf_df]).sort_index()
+
+            print("Readable Rows: " + str(len(df.index)))
             print(df)
+            print("\n")
 
 
 
