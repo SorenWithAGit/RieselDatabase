@@ -241,9 +241,21 @@ It should be noted that the STAVG2 is calculated from the
 STMAX and STMIN, whereas reported STAVG values were calculated from
 all the values within a day.
 
+                    Analysis of 2004-2009
+Reviewing the data in these files, it was noticed that several values
+in multiple columns were -99999.00 or 99999.00 These are obvious
+fails in the sensor. 
+To handle these failures the rows containing either of these two
+values were added to a new dataframe. For the readable dataframe (df)
+these values were converted to "nan" float values.
+There are only a few instances where the rows contained extra values
+similiar to the extras found in the 2003 file. Apart from 2004 where
+rows 4 - 35 measured data are all "na", except for max and min soil Temp
+values. The "na" values will be converted to "nan" and "nan" will be
+appended to rows 4 - 35 at the max and min soil temps.
+
                         TO DO:
 Compare the modified data to the daily weather data files. 
-Examine the data from 2004 - 2009 files.
 Propose a plan of action for the data.
 
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Hourly Met
