@@ -286,15 +286,15 @@ class read_txt:
             senseor_f_ln = []
             
             for i, row in enumerate(filtered_rows[3:]):
+
                 if len(row) == 17:
                     for value in row:
-                        if value == "na":
-                            break
                         if float(value) == -99999.00 \
                         or float(value) == 99999.00:
                             sensor_fails.append(row)
                             senseor_f_ln.append(i + 4)
                             break
+
                 else:
                     break
             sf_df = pd.DataFrame(sensor_fails, columns = columns2)
@@ -332,6 +332,10 @@ class read_txt:
             index = []
             for i, row in enumerate(filtered_rows[3:]):
                 # print("row #: " + str(i + 4))
+                if len(row) == 15:
+                    while len(row) < 17:
+                        row.append("nan")
+                
                 if len(row) == 17:
                     new_rows.append(row)
                     index.append(i + 4)
@@ -345,14 +349,15 @@ class read_txt:
                     print("Check row #: " + str(i + 4))
                     break
 
-            for row in new_rows:
-                for val in row:
+            for n, row in enumerate(new_rows):
+                for rv, val in enumerate(row):
                     if val == "na":
-                        val.replace("na", "nan")
+                        new_rows[n][rv] = val.replace("na", "nan")
+            # print(new_rows[0:36])
 
             print("\n")
             df = pd.DataFrame(new_rows, columns = columns2).astype({
-                "YEAR" : int, "Day" : int, "HOUR" : int,
+                "YEAR" : int, "Day" : int, "HOUR" : float,
                 "RHMXD" : float, "RHUMD" : float, "VPRSD" : float,
                 "SRAD" : float, "WIND" : float, "WINDDIR" : float,
                 "WMAX" : float, "RAIN" : float, "STAVG" : float,
