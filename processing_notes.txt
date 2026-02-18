@@ -255,6 +255,8 @@ values. The "na" values will be converted to "nan" and "nan" will be
 appended to rows 4 - 35 at the max and min soil temps.
 
                         TO DO:
+Isolate records where the soil sensor values need to be checked when 
+compared to the TMAX & TMIN.
 Compare the modified data to the daily weather data files. 
 Propose a plan of action for the data.
 
