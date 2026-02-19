@@ -168,6 +168,32 @@ class read_txt:
             for row in sensor_fails:
                 print(row)
 
+            readable_rows  = filtered_rows[3:]
+            rdab_line_num = []
+
+            # for f, row in enumerate(filtered_rows[3:]):
+
+            #     if all(isinstance(x, (int, float)) for x in row):
+            #         readable_rows.append(row)
+            #         rdab_line_num.append(f + 4)
+    
+            rdab = pd.DataFrame(readable_rows, columns = columns1)
+            rddates = []
+            rdyears = rdab["YEAR"].tolist()
+            rddays = rdab["Day"].tolist()
+            for d, year in enumerate(rdyears):
+                year = year
+                day = rddays[d]
+                julian_string = str(year + day)
+                date = datetime.strptime(julian_string, '%Y%j').date()
+                rddates.append(date)
+            rdab["DOY"] = rddates
+            rdcols = list(rdab.columns)
+            rdnew_order = [rdcols[-1]] + rdcols[:-1]
+            rdab = rdab[rdnew_order]
+            rdab = rdab.fillna(value = np.nan)
+            print(rdab)
+
             # After finding error in values retrieve the row before
             for i, row in enumerate(filtered_rows[3:]):
                 for value in row:
