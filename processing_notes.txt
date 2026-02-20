@@ -7,7 +7,7 @@ Harmel Data Navigation
 
 Folder contains folders containing .WEB files for precipitation.
 
-read_files.py
+weather_files.py
 Code was developed to convert the .WEB files to csv and then into a 
 pandas dataframe. As of Friday February 6, 2026: tested code on a all
 subdailyprecip folders, functions successfully.
@@ -27,7 +27,7 @@ precipitation\subdailyprecip.
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Rainfall - Subdaily
 Contains subdaily precipitation data, some not found in Harmel
 or UmbracoWebsite.
-Ran read_files.py through UmbracoWebsite2 files. - 02/09/2026
+Ran weather_files.py through UmbracoWebsite2 files. - 02/09/2026
 
 Precipitation files were read with developed code.
 
@@ -40,7 +40,7 @@ Precipitation files were read with developed code.
 
 Folder contains excel files for daily weather from 1940 to 2008
 
-read_files.py
+weather_files.py
 Code was devoloped to open these files and compare them to the 
 weather files that were found in:
 \\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
@@ -50,7 +50,7 @@ additional daily weather files, 2009 to 2019.
  
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Daily Met
 Folder contains daily weather data from 1940 2020
-Ran read_files.py through UmbracoWebsite2. 02/09/2026
+Ran weather_files.py through UmbracoWebsite2. 02/09/2026
 
 Daily weather files were read with developed code.
 
@@ -63,7 +63,7 @@ Daily weather files were read with developed code.
 
 Folder contains excel files that can be seperated into two
 categories: those starting with 32-(year) and those starting with
-(year)ries. Apart from a loan file (PANevapcalc) which is a partial
+(year)ries. Apart from a lone file (PANevapcalc) which is a partial
 year of 1949.
 
 The 32 files are daily measurements of the evaporation pan 
@@ -77,7 +77,7 @@ files located:
 The evaporation pan mesurements are not included in the UmbracoWebsite
 files until 2012.
 
-read_files.py
+weather_files.py
 An additional function was coded to open and extract data of the 32
 form of evaporation pan measurements.
 
@@ -102,7 +102,7 @@ There are two file types for the runoff files:
 1. .web files
 2. .txt files
 
-read_files.py
+weather_files.py
 Code was developed to open the .web and .txt files and read the data
 into a pandas dataframe.
 
@@ -120,7 +120,7 @@ On Monday 02/09/2026
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Runoff - Subdaily
 Contains files with runoff data from the watersheds, some files are not
 in Harmel or UmbracoWebsite.
-Ran read_files.py through UmbracoWebsite2. 02/09/2026
+Ran weather_files.py through UmbracoWebsite2. 02/09/2026
 
 ########################################################################
 
@@ -168,8 +168,8 @@ Data also found in:
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Sediment - Daily
 Many of the file extensions must be converted to .txt.
 
-read_files.py
-A function was added to read_files.py under the 
+weather_files.py
+A function was added to weather_files.py under the 
 class read_txt read_sedement.
 This function accepts the filepath as a parameter and will read through
 the file and add the data to a dataframe depending on whether it is 
@@ -254,11 +254,28 @@ rows 4 - 35 measured data are all "na", except for max and min soil Temp
 values. The "na" values will be converted to "nan" and "nan" will be
 appended to rows 4 - 35 at the max and min soil temps.
 
+                Handling of Unlikely Soil Sensor Data
+While reviewing the soil temperature data it was noticed that the 
+STMIN values were negative throughout a whole day while the TMAX values
+were significantly higher than the STMIN. Doing a quick scan of the data
+for the days this occured and the neighborhing days, it was noticed that
+the temp values could not have resulted in the ss values being so low, 
+and the neighborhing ss values reinforced my hypothesis that the STMIN
+values throughout the corresponding day are incorrect. It is unclear
+as to why, but it could be an issue with the sensor, data logger, or
+entry into the raw file for example.
+
+The records containing the issue were corrected with the values that 
+were discussed in the meeting on 02/18/2026. Original data was not 
+altered.
+
                         TO DO:
 Isolate records where the soil sensor values need to be checked when 
-compared to the TMAX & TMIN.
-Compare the modified data to the daily weather data files. 
-Propose a plan of action for the data.
+compared to the STMAX & STMIN. This will be done by drafting an 
+algorithm that compares the STMIN to the STMAX within a day and the 
+neighboring STMIN and STMAX. TGAD, TMAX, and TMIN will also be taken
+into account when developing this algorithm.
+
 
 \\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Hourly Met
 
