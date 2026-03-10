@@ -269,6 +269,22 @@ The records containing the issue were corrected with the values that
 were discussed in the meeting on 02/18/2026. Original data was not 
 altered.
 
+While the max soil temp records, STMAX, can be negative outliers it was
+noticed that there are no instances where STMAX is negative and STMIN is
+positive. This means that the dataframe can be filtered by selecting 
+records where STMIN is negative all the negative STMAX values are 
+present in the filtered dataframe.
+
+There are 3081 records where STMIN is negative, making up 36.29% of
+the STMIN records. There are 2296 records where STMAX is negative,
+making up 27.05% of the STMAX records.
+
+The DOY and HOUR columns were combined in DATETIME and a new dataframe
+was created that summarized the hourly data into daily averages. The
+dataframe was then filtered by selecting records where the daily avg
+STMIN < x, for the moment x is set to 2.5. This dataframe contained
+138 records.
+
                         TO DO:
 Isolate records where the soil sensor values need to be checked when 
 compared to the STMAX & STMIN. This will be done by drafting an 
