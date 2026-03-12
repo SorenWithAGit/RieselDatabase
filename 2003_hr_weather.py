@@ -1,4 +1,4 @@
-from ..src import weatherFiles as wf
+from src import weatherFiles as wf
 import pandas as pd
 
 
@@ -29,12 +29,19 @@ print("STMAX values negative: " + str(f"{neg_STMAX_vals/num_vals*100:.2f}") + "%
 print("\n")
 
 neg_ST = dw03[(dw03["STMIN"] < 0)]
-print(neg_ST)
-print("\n")
+# print(neg_ST)
+# print("\n")
 
-avg_dw03 = dw03.groupby(pd.Grouper(key = "DATETIME", freq = "D"))[["TGAD", "TMAX", "TMIN", "RHMXD",
+daily_dw03 = dw03.groupby(pd.Grouper(key = "DATETIME", freq = "D"))[["TGAD", "TMAX", "TMIN", "RHMXD",
                                                                    "RHUMD", "SRAD", "WIND", "WINDDIR",
                                                                    "WMAX", "RAIN", "STAVG", "STMAX", "STMIN"]].mean()
-neg_avg_dw03 = avg_dw03[(avg_dw03["STMIN"] < 2.5)]
-print(neg_avg_dw03)
-print(len(neg_avg_dw03))
+
+
+neg_daily_dw03 = daily_dw03[(daily_dw03["STMIN"] < 2.5)]
+# print(neg_daily_dw03)
+# print(len(neg_daily_dw03))
+
+for week_start_date, weekly_data in daily_dw03.groupby(pd.Grouper(freq = "W")):
+    print("Start of weeK: " + str(week_start_date))
+    print(weekly_data)
+    print("\n")
