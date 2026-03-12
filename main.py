@@ -43,7 +43,7 @@ attribute_types = ["INTEGER REFERENCES Samples (ID)", "INTEGER REFERENCES Units 
                    "FLOAT", "FLOAT", "FLOAT", "FLOAT",
                    "FLOAT"]
 tb = tables.Tables(DB)
-tb.add_Table("ICP-OES", attributes, attribute_types)
+tb.add_Table("ICP-OES", attributes, attribute_types) 
 
 #######################################################################
 """

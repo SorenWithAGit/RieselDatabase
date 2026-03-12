@@ -62,7 +62,7 @@ class read_txt:
             for line in file:
                 rows.append(line.split())
         
-        filtered_rows = [sublist for sublist in rows if sublist]
+        avg_rows = [sublist for sublist in rows if sublist]
 
         # for i, label in enumerate(column_labels):
         #     print("row " + str(i) + " with len: " + str(len(label)))
@@ -137,10 +137,10 @@ class read_txt:
         next_line_n = []
 
         # filter years where barometer was not in use
-        if len(filtered_rows[0]) == 20 \
-        or len(filtered_rows[2]) == 16:
+        if len(avg_rows[0]) == 20 \
+        or len(avg_rows[2]) == 16:
             # print("file does not contain vp")
-            # for row in filtered_rows[3:6]:
+            # for row in avg_rows[3:6]:
                 # print("length of row: " + str(len(row)))
                 # print(row)
 
@@ -160,7 +160,7 @@ class read_txt:
             
             sensor_fails = []
             
-            for i, row in enumerate(filtered_rows[3:]):
+            for i, row in enumerate(avg_rows[3:]):
                 for value in row:
                     if value == "na":
                         break
@@ -175,13 +175,13 @@ class read_txt:
             for row in sensor_fails:
                 print(row)
 
-            readable_rows  = filtered_rows[3:]
+            readable_rows  = avg_rows[3:]
             rdab_line_num = []
 
             for rln in range(len(readable_rows)):
                 rdab_line_num.append(rln + 4)
 
-            # for f, row in enumerate(filtered_rows[3:]):
+            # for f, row in enumerate(avg_rows[3:]):
 
             #     if all(isinstance(x, (int, float)) for x in row):
             #         readable_rows.append(row)
@@ -203,17 +203,17 @@ class read_txt:
             rdab = rdab[rdnew_order]
             rdab = rdab.fillna(value = np.nan)
             rdab.index = rdab_line_num
-            print("raw dataframe: ")
-            print(rdab)
+            # print("raw dataframe: ")
+            # print(rdab)
 
             # After finding error in values retrieve the row before
-            for i, row in enumerate(filtered_rows[3:]):
+            for i, row in enumerate(avg_rows[3:]):
                 for value in row:
                     try:
                         num_float = float(value)
                     except:
                         prev_row_n = i + 2
-                        prev_row = filtered_rows[prev_row_n]
+                        prev_row = avg_rows[prev_row_n]
                         prev_line_n.append(prev_row_n + 1)
                         prev_rows.append(prev_row)
                         # prev_line_n.append(prev_row_n + 1)
@@ -222,7 +222,7 @@ class read_txt:
 
 
             # Create Dataframe rows containing value errors
-            for ic, crow in enumerate(filtered_rows[3:]):
+            for ic, crow in enumerate(avg_rows[3:]):
                 for cvalue in crow:
                     try:
                         num_float = float(cvalue)
@@ -236,13 +236,13 @@ class read_txt:
                         break
             
             # Create Dataframe of rows after checked row
-            for ir, row in enumerate(filtered_rows[3:]):
+            for ir, row in enumerate(avg_rows[3:]):
                 for value in row:
                     try:
                         num_float = float(value)
                     except:
                         next_row_n = ir + 4
-                        next_row = filtered_rows[next_row_n]
+                        next_row = avg_rows[next_row_n]
                         next_line_n.append(next_row_n + 1)
                         next_rows.append(next_row)
                         # print(next_row)
@@ -318,7 +318,7 @@ class read_txt:
             # merged_df.to_csv(output_file)
 
             rdab = rdab[~rdab.index.isin(check_df.index)]
-            # print("filtered dataframe")
+            # print("avg dataframe")
             # print(rdab)
 
             if filepath == r"I:\programming\python\riesel_file_checker\Harmel\Hourly weather\2003ries.txt":
@@ -328,8 +328,27 @@ class read_txt:
 
                 rdab = pd.concat([rdab, correction_df]).sort_index()
 
-                print("corrected dataframe")
-                print(rdab)
+                rdab = rdab.astype({
+                                             "DOY" : str,
+                                             "HOUR" : str,
+                                             "TGAD" : float,
+                                             "TMAX" : float,
+                                             "TMIN" : float,
+                                             "RHMXD" : float,
+                                             "RHUMD" : float,
+                                             "SRAD" : float,
+                                             "WIND" : float,
+                                             "WINDDIR" : float,
+                                             "WMAX" : float,
+                                             "RAIN" : float,
+                                             "STAVG" : float,
+                                             "STMAX" : float,
+                                             "STMIN" : float
+                })
+
+                # print("corrected dataframe")
+                # print(rdab)
+            return rdab
 
             # Print merged_df as string and print with spacing
             # print(merged_df.to_string(col_space = 15))
@@ -337,8 +356,8 @@ class read_txt:
             print("\n")
 
 
-        elif len(filtered_rows[0]) == 29 \
-        or len(filtered_rows[2]) == 12:
+        elif len(avg_rows[0]) == 29 \
+        or len(avg_rows[2]) == 12:
             
             columns2 = ["YEAR", "Day", "HOUR", 
             "TGAD", "TMAX", "TMIN",
@@ -350,7 +369,7 @@ class read_txt:
             sensor_fails = []
             senseor_f_ln = []
             
-            for i, row in enumerate(filtered_rows[3:]):
+            for i, row in enumerate(avg_rows[3:]):
 
                 if len(row) == 17:
                     for value in row:
@@ -395,7 +414,7 @@ class read_txt:
             new_rows = []
             check_rows = []
             index = []
-            for i, row in enumerate(filtered_rows[3:]):
+            for i, row in enumerate(avg_rows[3:]):
                 # print("row #: " + str(i + 4))
                 if len(row) == 15:
                     while len(row) < 17:
@@ -454,6 +473,7 @@ class read_txt:
             print("Readable Rows: " + str(len(df.index)))
             print(df)
             print("\n")
+            return df
 
 
 
@@ -851,17 +871,22 @@ class file_checker:
                     # Read Hourly Weather
 ########################################################################
 
-root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Hourly weather"
+# root_folder = r"I:\programming\python\riesel_file_checker\Harmel\Hourly weather"
 
-f = files
-fp = f.get_files(root_folder, "*.txt")[0]
-fn = f.get_files(root_folder, "*.txt")[1]
+# f = files
+# fp = f.get_files(root_folder, "*.txt")[0]
+# fn = f.get_files(root_folder, "*.txt")[1]
 
-for i, path in enumerate(fp):
-    print(path)
-    print(fn[i])
-    rt = read_txt
-    dw = rt.read_hr_weather(path)
+# for i, path in enumerate(fp):
+#     print(path)
+#     print(fn[i])
+#     rt = read_txt
+#     dw = rt.read_hr_weather(path)
+
+
+# filtered_avg_dw03 = avg_dw03[(avg_dw03["STMAX"] > 0) & (avg_dw03["STMIN"] < 0)]
+# print(filtered_avg_dw03)
+# print(len(filtered_avg_dw03))
 
 ########################################################################
 
