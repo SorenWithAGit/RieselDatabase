@@ -1,0 +1,302 @@
+
+Harmel Data Navigation
+
+                            Precipitation
+########################################################################
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\precipitation\subdailyprecip
+
+Folder contains folders containing .WEB files for precipitation.
+
+weather_files.py
+Code was developed to convert the .WEB files to csv and then into a 
+pandas dataframe. As of Friday February 6, 2026: tested code on a all
+subdailyprecip folders, functions successfully.
+
+Code was developed to read the .txt precipitation values into a 
+pandas dataframe. In Harmel folder rw9web rgw905.txt several years
+were incorrect. Manually converted the years to the matching 2005.
+Ran read_txt.read_precip() on several folders in subdailyprecip
+successfully.
+
+It appears that the web files are stored in both folders and raw web
+files located:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel
+There are additional fields that are not in Harmel 
+precipitation\subdailyprecip.
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Rainfall - Subdaily
+Contains subdaily precipitation data, some not found in Harmel
+or UmbracoWebsite.
+Ran weather_files.py through UmbracoWebsite2 files. - 02/09/2026
+
+Precipitation files were read with developed code.
+
+########################################################################
+
+
+                            Daily weather
+########################################################################
+\\ARS-DATA\Archive\HarmelExit\riesel\weather\koesterdailyweather
+
+Folder contains excel files for daily weather from 1940 to 2008
+
+weather_files.py
+Code was devoloped to open these files and compare them to the 
+weather files that were found in:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
+
+The files were identical apart from the Umbraco folder containing
+additional daily weather files, 2009 to 2019.
+ 
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Daily Met
+Folder contains daily weather data from 1940 2020
+Ran weather_files.py through UmbracoWebsite2. 02/09/2026
+
+Daily weather files were read with developed code.
+
+########################################################################
+
+
+                        Evaporation Pan files
+########################################################################
+\\ARS-DATA\Archive\HarmelExit\riesel\weather\evappan
+
+Folder contains excel files that can be seperated into two
+categories: those starting with 32-(year) and those starting with
+(year)ries. Apart from a lone file (PANevapcalc) which is a partial
+year of 1949.
+
+The 32 files are daily measurements of the evaporation pan 
+measured by Gary Hoeft.
+
+THe (year)ries files are daily weather files with the evaporation pan
+measurements in the last few columns. The weather values appear to be 
+identical to the daily weather files for 2010 to 2015 found in the 
+files located:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel\daily.zip
+The evaporation pan mesurements are not included in the UmbracoWebsite
+files until 2012.
+
+weather_files.py
+An additional function was coded to open and extract data of the 32
+form of evaporation pan measurements.
+
+########################################################################
+
+
+                            Runoff files
+########################################################################
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\runoff\subdailyrunoff
+
+Folder contains compressed zip folders, each containing subdaily runoff
+files for the Watersheds. Data is categorized by:
+Watershed
+month
+day
+year
+time (min)
+runoff (cfs)
+runoff (in/hr))
+There are two file types for the runoff files:
+1. .web files
+2. .txt files
+
+weather_files.py
+Code was developed to open the .web and .txt files and read the data
+into a pandas dataframe.
+
+\\ARS-DATA\Archive\UmbracoWebsite
+contains some of the runoff data but not all found in Harmel.
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Runoff - Subdaily
+
+Folder contains the corresponding runoff data.
+
+Read through all runoff files in:
+I:\programming\python\riesel_file_checker\Harmel\Subdaily Runoff
+On Monday 02/09/2026
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Runoff - Subdaily
+Contains files with runoff data from the watersheds, some files are not
+in Harmel or UmbracoWebsite.
+Ran weather_files.py through UmbracoWebsite2. 02/09/2026
+
+########################################################################
+
+
+                        Well Levels
+########################################################################
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Well Level
+There is a single Excel file containing well level measurements from
+2000 to 2020. I believe these were checked by Gary Hoeft multiple days
+a week. There is no matching data in Harmel.
+
+                        TO DO:
+Use Pandas to read the data in a dataframe that will be useable when
+it is time to import data into the DB.
+
+########################################################################
+
+
+                            Sediment
+########################################################################
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\sediment\sedbrkpt2009.zip
+Folder contains files that the extensions must be converted to .txt 
+files. Files contain subdaily sedementation values.
+Columns:
+watershed, month, day, year, time, sed conc (ppm), sed amt (t/a)
+
+Data is found in:
+\\ARS-DATA\Archive\UmbracoWebsite\riesel
+However the files are not grouped in folders
+
+Data also found in:
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Sediment - Subdaily
+The files are grouped together, but the file extensions must be 
+changed to .txt.
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\sediment\sedday2009.zip
+Folder contains files containing the bdaily sedimentation values,
+but the files must have the extensions converted to .txt.
+Columns:
+Watershed, month, day, year, sed amt (t/a)
+
+Data also found in:
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Sediment - Daily
+Many of the file extensions must be converted to .txt.
+
+weather_files.py
+A function was added to weather_files.py under the 
+class read_txt read_sedement.
+This function accepts the filepath as a parameter and will read through
+the file and add the data to a dataframe depending on whether it is 
+daily or subdaily data.
+
+Ran it through Harmel Daily and Subdaily data as well as UmbracoWebsite2
+Daily and Subdaily Data.
+
+########################################################################
+
+
+                            # Hourly weather
+########################################################################
+
+\\ARS-DATA\Archive\HarmelExit\riesel\TxBLPhydro\I. historical data\weather\hourlyweather2009.zip
+
+The .txt files in these two folders are from 2001 - 2009.
+From 2001 - 2003 There is no vapor pressure data 
+From 2004 - 2009 Vapor pressure is added and headers differ from 01-03.
+
+Attempts were made to group the first 3 rows of the files to obtain
+the same headers.
+After discussions with supervisor it was determined that the ICASA 
+Data Standards would be used.
+The dataframe structure was coded accordingly.
+
+Upon further inspection of the data it was noticed that there are
+what appears to be extra values in the same columns which has thrown
+the next values in sequence off. 
+
+Code was developed to identify these errors and return the row # 
+corresponding to the row while viewed in VS Code.
+Further development was made to print the labels and row values
+in a orgainised fashion.
+
+Code was developed to isolate the rows prior and after the occurance
+of the extra values for the 2001 - 2003 files.
+
+Code was developed to read the 2004 - 2009 files and identify errors
+in the values.
+
+By utilizing the length of a row as well as reading the values as 
+floats:
+for the 2004 - 2009 files -if there are extra values the row will be 
+appended to a list of check_values. If the rows are fine they will be 
+read into a pandas DataFrame.
+
+For the dataframes created from both files the index corresponds to 
+the index of the file when viewed with VS code.
+
+Navigating the .txt files has shown that there are times that sensors
+fail, mostly, the values will be -9999.00. Additional code will be
+developed to identify these occurances.
+
+                     Analysis of 2003
+Reviewing each row of data and comparing the previous and next row led
+to a trend appearing where RAIN contained a value of 1.00 and STMAX
+would have a double value. This trend does not apply to every entry
+a more in depth analysis will be provided.
+
+THe rows of data were modified by removing the 1.00 and moving the 
+values 1 cell left.While the modified RAIN value is still has an 
+inconsistent value while comparing to the previous and next rows.
+The STAVG | STMAX | STMIN values show more consistency. 
+A STAVG2 was calculated from the modified values and was compared to
+the STAVG if the data was modified.
+The STAVG2 was more inconsistent when the STMIN values were negative.
+It should be noted that the STAVG2 is calculated from the 
+STMAX and STMIN, whereas reported STAVG values were calculated from
+all the values within a day.
+
+                    Analysis of 2004-2009
+Reviewing the data in these files, it was noticed that several values
+in multiple columns were -99999.00 or 99999.00 These are obvious
+fails in the sensor. 
+To handle these failures the rows containing either of these two
+values were added to a new dataframe. For the readable dataframe (df)
+these values were converted to "nan" float values.
+There are only a few instances where the rows contained extra values
+similiar to the extras found in the 2003 file. Apart from 2004 where
+rows 4 - 35 measured data are all "na", except for max and min soil Temp
+values. The "na" values will be converted to "nan" and "nan" will be
+appended to rows 4 - 35 at the max and min soil temps.
+
+                Handling of Unlikely Soil Sensor Data
+While reviewing the soil temperature data it was noticed that the 
+STMIN values were negative throughout a whole day while the TMAX values
+were significantly higher than the STMIN. Doing a quick scan of the data
+for the days this occured and the neighborhing days, it was noticed that
+the temp values could not have resulted in the ss values being so low, 
+and the neighborhing ss values reinforced my hypothesis that the STMIN
+values throughout the corresponding day are incorrect. It is unclear
+as to why, but it could be an issue with the sensor, data logger, or
+entry into the raw file for example.
+
+The records containing the issue were corrected with the values that 
+were discussed in the meeting on 02/18/2026. Original data was not 
+altered.
+
+While the max soil temp records, STMAX, can be negative outliers it was
+noticed that there are no instances where STMAX is negative and STMIN is
+positive. This means that the dataframe can be filtered by selecting 
+records where STMIN is negative all the negative STMAX values are 
+present in the filtered dataframe.
+
+There are 3081 records where STMIN is negative, making up 36.29% of
+the STMIN records. There are 2296 records where STMAX is negative,
+making up 27.05% of the STMAX records.
+
+The DOY and HOUR columns were combined in DATETIME and a new dataframe
+was created that summarized the hourly data into daily averages. The
+dataframe was then filtered by selecting records where the daily avg
+STMIN < x, for the moment x is set to 2.5. This dataframe contained
+138 records.
+
+                        TO DO:
+Isolate records where the soil sensor values need to be checked when 
+compared to the STMAX & STMIN. This will be done by drafting an 
+algorithm that compares the STMIN to the STMAX within a day and the 
+neighboring STMIN and STMAX. TGAD, TMAX, and TMIN will also be taken
+into account when developing this algorithm.
+
+
+\\ARS-DATA\Archive\UmbracoWebsite2\Riesel\Hourly Met
+
+########################################################################
+
+
+
+########################################################################
