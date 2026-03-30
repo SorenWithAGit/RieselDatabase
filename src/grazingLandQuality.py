@@ -5,6 +5,96 @@ import pdfplumber
 
 class read_pdf:
 
+    def raw_txt(file):
+        all_text = []
+        with pdfplumber.open(file) as pdf:
+            for p, page in enumerate(pdf.pages):
+                plum_text = page.extract_text()
+                all_text += plum_text.split("\n")
+        return all_text
+
+
+    def read_NIRS(file):
+
+        # NIRS_cols = ["Sample", "Pasture Name", "Date Collected", "Date Received",
+        #                             "Crude Protein", "Digestible Organic Matter", "Fecal Nitrogen", "Fecal Phosphorus"]
+        
+        NIRS_cols = ["Sample", "Pasture Name", "Date Collected",
+                            "Crude Protein", "Digestible Organic Matter", "Fecal Nitrogen", "Fecal Phosphorus"]
+
+        NIRS_results = pd.DataFrame(columns = NIRS_cols)
+        
+        # create lists to append data
+
+        ## NIRS lists
+        samples = []
+        pasture_names = []
+        collect_dates = []
+        # rcvd_dates = []
+        crude_protein = []
+        digest_om = []
+        fecal_N = []
+        fecal_P = []
+
+        # Read raw pdf
+        with pdfplumber.open(file) as pdf:
+            for p, page in enumerate(pdf.pages):
+                plum_text = page.extract_text()
+                if "NIRS" in plum_text.split("\n")[0]:
+                    for row in plum_text.split("\n"):
+                        if "NIRS" in row:
+                            pass
+                        else:
+                            if len(row.split(": ")) == 2:
+                                if "Sample: " in row:
+                                    samples.append(row.split("Sample: ")[1])
+                                elif "Pasture Name: " in row:
+                                    pasture_names.append(row.split("Pasture Name: ")[1])
+                                elif "Date Collected: " in row:
+                                    collect_dates.append(row.split("Date Collected: ")[1])
+                                elif "Date Received: " in row:
+                                    # rcvd_dates.append(row.split("Date Received: ")[1])
+                                    pass
+                                elif "Crude Protein: " in row:
+                                    crude_protein.append(row.split("Crude Protein: ")[1])
+                                elif "Digestible Organic Matter: " in row:
+                                    digest_om.append(row.split("Digestible Organic Matter: ")[1])
+                                elif "Fecal Nitrogen: " in row:
+                                    fecal_N.append(row.split("Fecal Nitrogen: ")[1])
+                                elif "Fecal Phosphorus: " in row:
+                                    fecal_P.append(row.split("Fecal Phosphorus: ")[1])
+
+                            elif len(row.split(": ")) == 3:
+                                if "Sample: " in row:
+                                    samples.append(row.split(": ")[1].split(" ")[0])
+                                    crude_protein.append(row.split(": ")[2])
+                                elif "Pasture Name: " in row:
+                                    pasture_names.append(row.split(": ")[1].split(" ")[0])
+                                    digest_om.append(row.split(": ")[2])
+                                elif "Date Collected: " in row:
+                                    collect_dates.append(row.split(": ")[1].split(" ")[0])
+                                    fecal_N.append(row.split(": ")[2])
+                                elif "Report Date: " in row:
+                                    fecal_P.append(row.split(": ")[2])
+
+        NIRS_lsts = [
+        samples,
+        pasture_names,
+        collect_dates,
+        # rcvd_dates,
+        crude_protein,
+        digest_om,
+        fecal_N,
+        fecal_P
+        ]
+
+        # print(NIRS_lsts)
+
+        for c, column in enumerate(NIRS_cols):
+            NIRS_results[column] = NIRS_lsts[c]
+        print(NIRS_results)
+
+
     def read_gans(file):
 
         NIRS_results = pd.DataFrame(columns = ["Sample", "Pasture Name", "Date Collected", "Date Received",
