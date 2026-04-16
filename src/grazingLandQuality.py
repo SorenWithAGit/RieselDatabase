@@ -1,17 +1,173 @@
 from pypdf import PdfReader
-import fitz
+import pymupdf
+from itertools import pairwise
 import pandas as pd
 import pdfplumber
+from pprint import pprint
+import ast
 
 class read_pdf:
 
-    def raw_txt(file):
+    def __init__(self):
+         self.columns = {
+         "nirs" : ["Sample", "Pasture Name", "Date Collected", "Date Received",
+                            "Crude Protein", "Digestible Organic Matter", "Fecal Nitrogen", "Fecal Phosphorus"],
+
+         "nutbal" : ["Sample", "Sample Date", "Profile Name", "Animal Kind",
+                                "Pasture Name", "Breedtype", "Vegetation Type", "Animal Class",
+                                "Standard Ref. Wt. (lbs)", "Days Pregnant", "Current Weight (lbs)", "Days Lactating",
+                                "Current Body Condition", "Average Age", "Crude Protein Intake (lbs)", "Crude Protein Requirement (lbs)",
+                                "Crude Protein Balance (lbs)", "NEm (Meal/day) Intake", "NEm (Meal/day) Requirement", "NEm (Meal/day) Balance",
+                                "NEg (Meal/day) Intake", "NEg (Meal/day) Requirement", "NEg (Meal/day) Balance", "Weight Change Goal (lbs/day)",
+                                "Estimated Weight Change (lbs/day)", "Estimated Weight in 30 Days (lbs)", "Estimate Body Condition in 30 days",
+                                "Performance Limited By", "Dry Matter Intake Concentrates (lbs/day)",
+                                "Dry Matter Intake Concentrates (% of Std. Ref. Wt.)", "Dry Matter Intake Concentrates (AUE)",
+                                "Dry Matter Intake Roughage (lbs/day)", "Dry Matter Intake Roughage (% of Std. Ref. Wt.)", 
+                                "Dry Matter Intake Roughage (AUE)", "Dry Matter Intake Forage (lbs/day)", "Dry Matter Intake Forage (% of Std. Ref. Wt.)",
+                                "Dry Matter Intake Forage (AUE)", "Dry Matter Intake Calf DM/d (lbs/d)", 
+                                "Dry Matter Intake Calf DM/d (% of std. Ref. Wt.)", "Dry Matter Intake Calf DM/d (AUE)", ""
+                                "Dry Matter Intake Total (lbs/d)", "Dry Matter Intake Total (% of Std. Ref. Wt.)", 
+                                "Dry Matter Intake Total (AUE)", "CP Consumption (Overall)", "CP Consumption (Forage)",
+                                "DOM Consumption (Overall)", "DOM Consumption (Forage)", "DOM/CP (Overall)", "DOM/CP (Forage)",
+                                "Potential Milk Production (lbs/day)", "Actual Milk Production (lbs/day)", 
+                                "Estimated Fecal Output (lbs/day)", "Fecal P Output (lbs/day)", "Fecal N Output (lbs/day)"]
+         }
+
+         self.nirs = pd.DataFrame(columns = self.columns["nirs"])
+         self.nutbal = pd.DataFrame(columns = self.columns["nutbal"])
+
+         
+
+    def raw_txt(self, file):
         all_text = []
         with pdfplumber.open(file) as pdf:
             for p, page in enumerate(pdf.pages):
                 plum_text = page.extract_text()
                 all_text += plum_text.split("\n")
         return all_text
+    
+    def scrub_text(self, all_text):
+        df_map = {
+            "nirs" : self.nirs,
+            "nutbal" : self.nutbal
+        }
+        nirs = {i : [] for i in range(len(self.columns["nirs"]))}
+        nutbal = {j : [] for j in range(len(self.columns["nutbal"]))}
+        current_locals = locals()
+        lines = all_text[0:18]
+        for line in lines:
+            split_line = line.split()
+            print(split_line)
+            user_input = input("pass or df selction, columns, vals to append: ")
+            if user_input != "pass":
+                input_list = ast.literal_eval(user_input)
+                df_select = input_list[0]
+                df_columns = input_list[1]
+                df_values = input_list[2]
+                if df_select in current_locals and isinstance(current_locals[df_select], dict):
+                    if df_select in df_map:
+                        for i, col in enumerate(df_columns):
+                            if type(df_values[i]) is list:
+                                # print("value is list")
+                                value = ""
+                                for val in df_values[i]:
+                                    value += split_line[val]
+                                    value += " "
+                            else:
+                                value = split_line[df_values[i]]
+                            current_locals[df_select][col].append(value)
+                    print(current_locals[df_select])
+                    #     try:
+                    #         value = ""
+                    #         print(type(df_values[i]))
+                    #         for val in df_values[i]:
+                    #             value += split_line[val]
+                    #     except:
+                    #         value = split_line[df_values[i]]
+                    # print(df_map[df_select])
+
+    
+    def pdf_plum(file):
+        table_settings = {
+                            "vertical_strategy": "text",
+                            "horizontal_strategy": "text", 
+                            }
+        with pdfplumber.open(file) as pdf:
+            row_labels = []
+            page = pdf.pages[1]
+            table = page.extract_table(table_settings)
+            filter_table = [[iter for iter in sublist if iter != ""] for sublist in table]
+            filteri_table = list(filter(None, filter_table))
+            for l in range(len(filteri_table)):
+                for i in range(len(filteri_table[l])):
+                    if ":" in filteri_table[l][i]:
+                        # print(i)
+                        # print(filteri_table[l][i])
+                        variable = ""
+                        for r in range(i+1):
+                            variable += filteri_table[l][r]
+                        row_labels.append(variable)
+                
+        unique_labels = []
+        for label in row_labels:
+            if label not in unique_labels:
+                unique_labels.append(label)
+        print(unique_labels)
+
+    def pymu_tables(file):
+        NIRS_cols = ["Sample", "Pasture Name", "Date Collected",
+                            "Crude Protein", "Digestible Organic Matter", "Fecal Nitrogen", "Fecal Phosphorus"]
+        row_labels = []
+        row_values = []
+        sample_values = []
+        pages = pymupdf.open(file)
+        # page1 = pages[0]
+        for page in pages:
+            tables = pages[1].find_tables(strategy = "text")
+            # pprint(table[0].extract())
+            for t in tables:
+                table = t.extract()
+                # pprint(table)
+                filter_table = [[iter for iter in sublist if iter != ""] for sublist in table]
+                filteri_table = list(filter(None, filter_table))
+                for l in range(len(filteri_table)):
+                    try:
+                        row_values.append(filteri_table[l][-1])
+                    except:
+                        row_values.append("nan")
+                    for i in range(len(filteri_table[l])):
+                        if ":" in filteri_table[l][i]:
+                            # print(i)
+                            # print(filteri_table[l][i])
+                            variable = ""
+                            for r in range(i+1):
+                                variable += filteri_table[l][r]
+                            row_labels.append(variable)
+                
+        unique_labels = []
+        for label in row_labels:
+            if label not in unique_labels:
+                unique_labels.append(label)
+        # print(unique_labels)
+        smpl_data_len = [i for i, x in enumerate(row_labels) if x == "Sample:"]
+        smpl_data_len.append(len(row_labels))
+        # print(smpl_data_len)
+        pprint(unique_labels)
+
+        for c_val, n_val in pairwise(smpl_data_len):
+            temp_lst = []
+            for dat in range(c_val, n_val):
+                temp_lst.append(row_values[dat])
+            sample_values.append(temp_lst)
+        temp_df = pd.DataFrame(sample_values, columns = unique_labels)
+        # print(temp_df)
+                    
+                
+
+            # pprint(row_values)
+            # pprint(filteri_table)
+        
+
 
 
     def read_NIRS(file):
