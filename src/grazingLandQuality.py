@@ -58,33 +58,32 @@ class read_pdf:
         for line in lines:
             split_line = line.split()
             print(split_line)
-            user_input = input("pass or df selction, columns, vals to append: ")
-            if user_input != "pass":
-                input_list = ast.literal_eval(user_input)
-                df_select = input_list[0]
-                df_columns = input_list[1]
-                df_values = input_list[2]
-                if df_select in current_locals and isinstance(current_locals[df_select], dict):
-                    if df_select in df_map:
-                        for i, col in enumerate(df_columns):
-                            if type(df_values[i]) is list:
-                                # print("value is list")
-                                value = ""
-                                for val in df_values[i]:
-                                    value += split_line[val]
-                                    value += " "
-                            else:
-                                value = split_line[df_values[i]]
-                            current_locals[df_select][col].append(value)
-                    print(current_locals[df_select])
-                    #     try:
-                    #         value = ""
-                    #         print(type(df_values[i]))
-                    #         for val in df_values[i]:
-                    #             value += split_line[val]
-                    #     except:
-                    #         value = split_line[df_values[i]]
-                    # print(df_map[df_select])
+            while True:
+                try:
+                    user_input = input("pass or df selction, columns, vals to append: ")
+                    if user_input != "pass":
+                        input_list = list(ast.literal_eval(user_input))
+                        df_select = input_list[0]
+                        df_columns = input_list[1]
+                        df_values = input_list[2]
+                        if df_select in current_locals and isinstance(current_locals[df_select], dict):
+                            if df_select in df_map:
+                                for i, col in enumerate(df_columns):
+                                    if type(df_values[i]) is list:
+                                        # print("value is list")
+                                        value = ""
+                                        for val in df_values[i]:
+                                            value += split_line[val]
+                                            value += " "
+                                    else:
+                                        value = split_line[df_values[i]]
+                                    current_locals[df_select][col].append(value)
+                            print(current_locals[df_select])
+                    break
+                except (SyntaxError, ValueError, IndexError):
+                    print("Invalid Input Try Again")
+                    print(split_line)
+
 
     
     def pdf_plum(file):
