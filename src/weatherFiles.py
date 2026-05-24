@@ -53,6 +53,9 @@ class read_excel:
         df = df.iloc[:, [7, 3, 4, 5, 6]]
         return df
     
+    def read_subdly_runoff(excel_file):
+        df = pd.read_excel(excel_file)
+        return df
 
 class read_txt:
 
@@ -595,6 +598,18 @@ class read_txt:
         runoff_df["flow (in/hr)"] = flow_inhr
 
         print(runoff_df)
+    
+    def read_txt_runoff(text_file):
+        cols = ["site", "month", "day", "year", "in"]
+        df = pd.DataFrame(columns = cols)
+        with open(text_file) as file:
+            lines = file.readlines()
+        for line in lines[1:]:
+            values = line.split()
+            df.loc[len(df)] = [values[0], values[1], values[2], values[3], values[4]]
+        df["date"] = pd.to_datetime(df[["year", "month", "day"]])
+        df = df.iloc[:, [0, 5, 4]]
+        return df
 
     
     def read_sediment(filepath: str):

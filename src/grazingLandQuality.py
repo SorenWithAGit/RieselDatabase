@@ -5,6 +5,7 @@ import pandas as pd
 import pdfplumber
 from pprint import pprint
 import ast
+import numpy as np
 
 class read_pdf:
 
@@ -54,7 +55,7 @@ class read_pdf:
         nirs = {i : [] for i in range(len(self.columns["nirs"]))}
         nutbal = {j : [] for j in range(len(self.columns["nutbal"]))}
         current_locals = locals()
-        lines = all_text[0:18]
+        lines = all_text
         for line in lines:
             split_line = line.split()
             print(split_line)
@@ -77,12 +78,29 @@ class read_pdf:
                                             value += " "
                                     else:
                                         value = split_line[df_values[i]]
+                                        if value == "-":
+                                            value = np.nan
                                     current_locals[df_select][col].append(value)
                             print(current_locals[df_select])
                     break
                 except (SyntaxError, ValueError, IndexError):
                     print("Invalid Input Try Again")
                     print(split_line)
+        
+        for num_key, name_key in zip(list(nirs.keys()), self.columns["nirs"]):
+            nirs[name_key] = nirs.pop(num_key)
+        nirs_df = pd.DataFrame(nirs)
+
+        for n_key, nm_key in zip(list(nutbal.keys()), self.columns["nutbal"]):
+            nutbal[nm_key] = nutbal.pop(n_key)
+        nutbal_df = pd.DataFrame(nutbal)
+
+        df_map["nirs"] = pd.concat([df_map["nirs"], nirs_df])
+        df_map["nutbal"] = pd.concat([df_map["nutbal"], nutbal_df])
+
+        combined_df = pd.merge(df_map["nirs"], df_map["nutbal"], on = "Sample", how = "left")
+
+        return combined_df
 
 
     
