@@ -59,7 +59,7 @@ class runoff_calculator():
                                     }
             }
 
-    def flow_calculator(self, site, t_interval, level_df):
+    def flow_calculator(self, site, t_interval, df):
             site = site
             multiplier_list = self.field_constants["flow constants"][site]
             check_list = self.field_constants["flow checks"][site]
@@ -73,7 +73,7 @@ class runoff_calculator():
 
             last_index = len(multiplier_list) - 1
 
-            clean_series = level_df["level (ft)"].to_numpy()
+            clean_series = df["level (ft)"].to_numpy()
             indices = np.searchsorted(active_checks, clean_series, side="right")
 
             indices = np.where(indices >= len(active_checks), last_index, indices)
@@ -81,17 +81,37 @@ class runoff_calculator():
             matched_multipliers = multipliers_arr[indices]
             matched_exponents = exponents_arr[indices]
 
-            level_df["new cfs"] = (clean_series**matched_exponents) * matched_multipliers
+            df["new cfs"] = (clean_series**matched_exponents) * matched_multipliers
 
-            level_df["new in/hr"] = ((level_df["new cfs"]*self.in_per_ft*self.s_per_hr)/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
+            df["new (in/hr)"] = ((df["new cfs"]*self.in_per_ft*self.s_per_hr)/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
 
-            level_df["JSKT runoff (mm)"] = ((level_df["new cfs"]*self.in_per_ft*self.mm_per_in*(t_interval*self.s_per_min))/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
+            df["JSKT runoff (mm)"] = ((df["new cfs"]*self.in_per_ft*self.mm_per_in*(t_interval*self.s_per_min))/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
 
-            return level_df
+            return df
     
     def calculate_delta_t(self, runoff_df, flow_sum_df):
             merged_df = pd.merge(flow_sum_df, runoff_df, on = "date")
             merged_df["delta_t"] = merged_df["in"] / merged_df["flow (in/hr)"]
             return merged_df
     
-  
+    def calculate_runoff(self, flow_df, time):
+        flow_df["date"] = pd.to_datetime(flow_df[["year", "month", "day"]])
+        runoff_df = flow_df.iloc[:, [0, 11, 4, 5, 6, 8, 7, 9, 10]]
+        # print(runoff_df)
+        runoff_df["Calculated runoff (in)"] = runoff_df["new (in/hr)"] * (time/60)
+        runoff_df = runoff_df.iloc[:, [0, 1, 2, 3, 4, 5, 6, 7, 9, 8]]
+        runoff_df["Caluclated runoff (mm)"] = runoff_df["Calculated runoff (in)"] * 25.4
+        runoff_df = runoff_df.iloc[:, [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 9]]
+        return runoff_df
+    
+    def calculate_daily_runoff(self, web_df, subdaily_df):
+        runoff_sum = subdaily_df.set_index("date").resample("D")["Calculated runoff (in)"].sum()
+        jskt_runoff = subdaily_df.set_index("date").resample("D")["JSKT runoff (mm)"].sum()
+        comparison_runoff = pd.merge(web_df, runoff_sum, on = "date")
+        comparison_runoff = pd.merge(comparison_runoff, jskt_runoff, on = "date")
+        comparison_runoff = comparison_runoff.rename(columns = {"in" : "Georgie runoff (in)"})
+        comparison_runoff["Georgie runoff (mm)"] = comparison_runoff["Georgie runoff (in)"] * 25.4
+        daily_runoff = comparison_runoff.iloc[:, [0, 1, 2, 3, 5, 4]]
+        return daily_runoff
+
+
