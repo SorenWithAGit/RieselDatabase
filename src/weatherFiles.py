@@ -610,8 +610,48 @@ class read_txt:
         df["date"] = pd.to_datetime(df[["year", "month", "day"]])
         df = df.iloc[:, [0, 5, 4]]
         return df
-
     
+    def read_sutron(sutron_file):
+        data = []
+        cols = ["date", "time", "entry_id", "logger?", "time (min)", "s level (ft)", "l level (ft)", "battery (v)"]
+        with open(sutron_file) as file:
+            lines = file.readlines()
+            file.close()
+        for line in lines:
+            if '"' in line:
+                line = line.replace('"', '')
+            if "," in line:
+                line = line.replace(",", " ")
+            if "\t" in line:
+                line = line.replace("\t", " ")
+            values = line.strip()
+            # print(values)
+            data_lst = []
+            data.append(values.split(" "))
+        for e, entry in enumerate(data):
+            if len(entry) == 6:
+                data[e].insert(6, np.nan)
+                data[e].insert(7, np.nan)
+            elif len(entry) == 7:
+                data[e].insert(6, np.nan)
+        sutron_df = pd.DataFrame(data, columns = cols).astype({
+            "date" : "str",
+            "time" : "str",
+            "entry_id" :"int",
+            "logger?" : "int",
+            "time (min)" : "int",
+            "s level (ft)" : "float",
+            "l level (ft)" : "float",
+            "battery (v)" : "float"
+        })
+        # sutron_df["date"] = pd.to_datetime(sutron_df["date"], format = "mixed")
+        sutron_df["datetime"] = pd.to_datetime(sutron_df["date"] + " " + sutron_df["time"], format = "mixed")
+        # sutron_df.set_index(sutron_df["datetime"], inplace = True)
+        sutron_df = sutron_df.sort_values(by = "datetime")
+        sutron_df = sutron_df.iloc[:, [8, 0, 1, 2, 3, 4, 5, 6, 7]]
+        # print(sutron_df)
+        return sutron_df
+
     def read_sediment(filepath: str):
 
         # read rows of text files and append rows containing data
