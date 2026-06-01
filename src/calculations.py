@@ -56,10 +56,26 @@ class runoff_calculator():
                                             "Y10" : [0.219, 0.219],
                                             "Y13" : [0.2, 0.6, 0.6],
                                             "Y14" : [0.6, 0.6]
+                                    },
+                                    "sampling interval" : {
+                                            "SW12" : 5,
+                                            "SW17" : 5,
+                                            "W1" : 10,
+                                            "W6" : 10,
+                                            "W10" : 10,
+                                            "W12" : 5,
+                                            "W13" : 5,
+                                            "Y2" : 10,
+                                            "Y6" : 10,
+                                            "Y8" : 10,
+                                            "Y10" : 10,
+                                            "Y13" : 5,
+                                            "Y14" : 5
                                     }
             }
 
-    def check_flow_calculator(self, site, t_interval, df):
+    def check_flow_calculator(self, site, df):
+            t_interval = self.field_constants["sampling interval"][site]
             multiplier_list = self.field_constants["flow constants"][site]
             check_list = self.field_constants["flow checks"][site]
             active_checks = check_list[:-1]
@@ -87,7 +103,8 @@ class runoff_calculator():
             df["JSKT runoff (mm)"] = ((df["new cfs"]*self.in_per_ft*self.mm_per_in*(t_interval*self.s_per_min))/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
 
             return df
-    def create_flow_calculator(self, site, t_interval, df):
+    def create_flow_calculator(self, site, df):
+            t_interval = self.field_constants["sampling interval"][site]
             multiplier_list = self.field_constants["flow constants"][site]
             check_list = self.field_constants["flow checks"][site]
             active_checks = check_list[:-1]
@@ -121,7 +138,8 @@ class runoff_calculator():
             merged_df["delta_t"] = merged_df["in"] / merged_df["flow (in/hr)"]
             return merged_df
     
-    def calculated_runoff(self, flow_df, time):
+    def calculated_runoff(self, site, flow_df):
+        time = self.field_constants["sampling interval"][site]
         flow_df["date"] = pd.to_datetime(flow_df[["year", "month", "day"]])
         runoff_df = flow_df.iloc[:, [0, 11, 4, 5, 6, 8, 7, 9, 10]]
         # print(runoff_df)
@@ -140,5 +158,17 @@ class runoff_calculator():
         comparison_runoff["Georgie runoff (mm)"] = comparison_runoff["Georgie runoff (in)"] * 25.4
         comparison_runoff = comparison_runoff.iloc[:, [0, 1, 2, 3, 5, 4]]
         return comparison_runoff
+    
+    def calculate_rmse(self, daily_df):
+          g_calcd = np.array(daily_df["Georgie runoff (mm)"])
+          jskt_calc = np.array(daily_df["JSKT runoff (mm)"])
+          raw_calc = np.array(daily_df["raw runoff (mm)"])
 
+          j_mask = jskt_calc != 0
+          r_mask = raw_calc != 0
 
+          jskt_G_rmse = np.sqrt(np.mean((g_calcd[j_mask] - jskt_calc[j_mask]) ** 2))
+          raw_G_rmse = np.sqrt(np.mean((g_calcd[r_mask] - raw_calc[r_mask]) ** 2))
+          raw_jskt_rmse = np.sqrt(np.mean((raw_calc[r_mask] - jskt_calc[r_mask]) ** 2))
+
+          return jskt_G_rmse, raw_G_rmse, raw_jskt_rmse
