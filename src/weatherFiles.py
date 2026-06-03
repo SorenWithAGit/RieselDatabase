@@ -617,6 +617,73 @@ class read_txt:
             file.close()
         first_ln = lines[0].split()
         try:
+            data_lsts = []
+            cols = ["datetime", "date", "time", "time (min)", "s level (ft)", "l level (ft)"]
+            for line in lines:
+                values = line.split(",")
+                data = []
+                # print(values)
+                if len(values) == 7 or len(values) == 6:
+                    try:
+                        year = values[2]
+                        julian_day = values[3]
+                        date_string = f"{year}-{julian_day}"
+                        date = datetime.strptime(date_string, "%Y-%j").date()
+                    except:
+                        year = values[3]
+                        julian_day = values[2]
+                        date_string = f"{year}-{julian_day}"
+                        date = datetime.strptime(date_string, "%Y-%j").date()
+                    time_min = int(values[4])
+                    hours = (time_min // 60) % 24
+                    minutes = time_min % 60
+                    time_str = f"{hours:02d}:{minutes:02d}"
+                    if time_str.startswith("24:"):
+                        time_str = "00:" + time_str[3:]
+                    time = datetime.strptime(time_str, "%H:%M").time()
+                    timestamp = datetime.combine(date, time)
+                    s_level = values[5]
+                    l_level = np.nan
+                    data.extend([timestamp, date, time, time_min, s_level, l_level])
+                    data_lsts.append(data)
+
+                elif len(values) > 7:
+                    try:
+                        year = values[2]
+                        julian_day = values[3]
+                        date_string = f"{year}-{julian_day}"
+                        date = datetime.strptime(date_string, "%Y-%j").date()
+                    except:
+                        year = values[3]
+                        julian_day = values[2]
+                        date_string = f"{year}-{julian_day}"
+                        date = datetime.strptime(date_string, "%Y-%j").date()
+                    time_min = int(values[4])
+                    hours = (time_min // 60) % 24
+                    minutes = time_min % 60
+                    time_str = f"{hours:02d}:{minutes:02d}"
+                    if time_str.startswith("24:"):
+                        time_str = "00:" + time_str[3:]
+                    time = datetime.strptime(time_str, "%H:%M").time()
+                    timestamp = datetime.combine(date, time)
+                    # print(timestamp)
+                    s_level = values[5]
+                    l_level = values[6]
+                    data.extend([timestamp, date, time, time_min, s_level, l_level])
+                    data_lsts.append(data)
+
+            if data_lsts != []:
+                sutron_df = pd.DataFrame(data_lsts, columns = cols).astype({
+                    
+                    "date" : "str",
+                    "time" : "str",
+                    "time (min)" : "int",
+                    "s level (ft)" : "float",
+                    "l level (ft)" : "float",
+                })
+            return sutron_df
+        
+        except:
             try:
                 data = []
                 cols = ["date", "time", "entry_id", "logger?", "time (min)", "s level (ft)", "l level (ft)", "battery (v)"]
@@ -628,6 +695,7 @@ class read_txt:
                     if "\t" in line:
                         line = line.replace("\t", " ")
                     values = line.strip()
+                    # print(values)
                     data_lst = []
                     data.append(values.split(" "))
                 for e, entry in enumerate(data):
@@ -665,6 +733,7 @@ class read_txt:
                     if "\t" in line:
                         line = line.replace("\t", " ")
                     values = line.strip().split(" ")
+                    # print(values)
 
                     if len(values) == 7 or len(values) == 6:
                         date = datetime.strptime(values[0], "%Y-%m-%d")
@@ -693,76 +762,6 @@ class read_txt:
                     "l level (ft)" : "float",
                 })
                 return sutron_df
-
-        except:
-            try:
-                data_lsts = []
-                cols = ["datetime", "date", "time", "time (min)", "s level (ft)", "l level (ft)"]
-                for line in lines:
-                    values = line.split(",")
-                    data = []
-                    # print(line)
-                    if len(values) == 7 or len(values) == 6:
-                        try:
-                            year = values[2]
-                            julian_day = values[3]
-                            date_string = f"{year}-{julian_day}"
-                            date = datetime.strptime(date_string, "%Y-%j").date()
-                        except:
-                            year = values[3]
-                            julian_day = values[2]
-                            date_string = f"{year}-{julian_day}"
-                            date = datetime.strptime(date_string, "%Y-%j").date()
-                        time_min = int(values[4])
-                        hours = (time_min // 60) % 24
-                        minutes = time_min % 60
-                        time_str = f"{hours:02d}:{minutes:02d}"
-                        if time_str.startswith("24:"):
-                            time_str = "00:" + time_str[3:]
-                        time = datetime.strptime(time_str, "%H:%M").time()
-                        timestamp = datetime.combine(date, time)
-                        s_level = values[5]
-                        l_level = np.nan
-                        data.extend([timestamp, date, time, time_min, s_level, l_level])
-                        data_lsts.append(data)
-
-                    elif len(values) == 8:
-                        try:
-                            year = values[2]
-                            julian_day = values[3]
-                            date_string = f"{year}-{julian_day}"
-                            date = datetime.strptime(date_string, "%Y-%j").date()
-                        except:
-                            year = values[3]
-                            julian_day = values[2]
-                            date_string = f"{year}-{julian_day}"
-                            date = datetime.strptime(date_string, "%Y-%j").date()
-                        time_min = int(values[4])
-                        hours = (time_min // 60) % 24
-                        minutes = time_min % 60
-                        time_str = f"{hours:02d}:{minutes:02d}"
-                        if time_str.startswith("24:"):
-                            time_str = "00:" + time_str[3:]
-                        time = datetime.strptime(time_str, "%H:%M").time()
-                        timestamp = datetime.combine(date, time)
-                        s_level = values[5]
-                        l_level = values[6]
-                        data.extend([timestamp, date, time, time_min, s_level, l_level])
-                        data_lsts.append(data)
-
-
-                sutron_df = pd.DataFrame(data_lsts, columns = cols).astype({
-                    "datetime" : "datetime64[ns]",
-                    "date" : "str",
-                    "time" : "str",
-                    "time (min)" : "int",
-                    "s level (ft)" : "float",
-                    "l level (ft)" : "float",
-                })
-                return sutron_df
-            
-            except Exception as e:
-                return line
 
 
     def read_sediment(filepath: str):

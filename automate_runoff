@@ -7,14 +7,13 @@ from src import weatherFiles as wt
 import glob
 import os
 
-# sutron_path = r"I:\programming\runoff\raw_logger_files\SW12\SW12_2016_1.dat"
-# site = "SW12"
+# sutron_path = r"I:\programming\runoff\raw_logger_files\Y2\Y2_2008_2.DAT"
 
 # sut = wt.read_txt
 # sutron = sut.read_sutron(sutron_path)
 # print(sutron)
 
-root_folder = r"I:\programming\runoff\raw_logger_files\SW17"
+root_folder = r"I:\programming\runoff\raw_logger_files\Y14"
 
 file_paths = glob.glob(root_folder + "//" + "*.dat")
 files = []
