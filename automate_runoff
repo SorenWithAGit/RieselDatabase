@@ -1,0 +1,31 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from src import calculations as cal
+from src import weatherFiles as wt
+import glob
+import os
+
+# sutron_path = r"I:\programming\runoff\raw_logger_files\SW12\SW12_2016_1.dat"
+# site = "SW12"
+
+# sut = wt.read_txt
+# sutron = sut.read_sutron(sutron_path)
+# print(sutron)
+
+root_folder = r"I:\programming\runoff\raw_logger_files\SW17"
+
+file_paths = glob.glob(root_folder + "//" + "*.dat")
+files = []
+for path in file_paths:
+    file_name = os.path.basename(path).split("/")[-1]
+    files.append(file_name)
+
+for f, file in enumerate(file_paths):
+    sut = wt.read_txt
+    try:
+        sutron = sut.read_sutron(file)
+        print(sutron)
+    except:
+        print(files[f])

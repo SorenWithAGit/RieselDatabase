@@ -38,10 +38,10 @@ raw_calc = raw_calc.iloc[:, [0, 1, 2, 5, 6, 7, 9, 10, 11]]
 # print(flow_calcutaor)
 
 raw_calc["date"] = pd.to_datetime(raw_calc["date"], format = "mixed")
-rosw12 = raw_calc.set_index("date").resample("D")["raw runoff (mm)"].sum()
+raw_daily = raw_calc.set_index("date").resample("D")["raw runoff (mm)"].sum()
 # print(rosw12)
 
-daily_runoff = pd.merge(daily_runoff, rosw12, on = "date")
+daily_runoff = pd.merge(daily_runoff, raw_daily, on = "date")
 daily_runoff["JSKT:GEORGIE"] = daily_runoff["JSKT runoff (mm)"] / daily_runoff["Georgie runoff (mm)"]
 daily_runoff["RAW:JSKT"] = daily_runoff["raw runoff (mm)"] / daily_runoff["JSKT runoff (mm)"]
 daily_runoff["RAW:GEORGIE"] = daily_runoff["raw runoff (mm)"] / daily_runoff["Georgie runoff (mm)"]
@@ -56,30 +56,42 @@ yii = np.array(daily_runoff["raw runoff (mm)"])
 mask = y != 0
 maski = yi != 0
 maskii = yii != 0
-# fig, ax = plt.subplots()
-# # ax.scatter(x[mask], y[mask], color = "red", label = "Georgie")
-# ax.scatter(xi[maski], yi[maski], color = "blue", label = "JSKT")
-# ax.scatter(xi[maskii], yii[maskii], color = "black", label = "RAW")
+fig, ax = plt.subplots()
 
-# ax.set_title("Runoff Series")
+# ax.scatter(x[mask], y[mask], color = "red", label = "Georgie")
+# ax.scatter(x[maski], yi[maski], color = "blue", label = "JSKT")
+# ax.scatter(x[maskii], yii[maskii], color = "black", label = "RAW")
+# ax.set_title("Runoff")
 # ax.set_xlabel("Date")
 # ax.set_ylabel("Runoff (mm)")
 # ax.legend()
 
+ax.scatter(x[mask], y[mask], color = "red", label = "Georgie")
+ax.scatter(xi[maski], yi[maski], color = "blue", label = "JSKT")
+ax.scatter(xi[maskii], yii[maskii], color = "black", label = "RAW")
+ax.set_title("Runoff")
+ax.set_xlabel("Georgie runoff (mm)")
+ax.set_ylabel("Calculated Runoff (mm)")
+ax.legend()
 
-sns.boxplot(x = y, color = "skyblue")
-plt.xlabel("Runoff (mm)")
-plt.title("Spread of Values")
-plt.grid(True, which = "both", linestyle = "--")
-plt.tight_layout
+
+# sns.boxplot(x = y, color = "skyblue")
+# plt.xlabel("Runoff (mm)")
+# plt.title("Spread of Values")
+# plt.grid(True, which = "both", linestyle = "--")
+# plt.tight_layout
 plt.show()
 
 print("Georgie runoff min (mm)" + str(min(y[mask])))
 print("Georgie runoff max (mm)" + str(max(y[mask])))
 
+me = rc.calculate_max_error(daily_runoff)
+print("Georgie v JSKT max error: " + str(me[0]) + "\n" \
+      + "Georgie v RAW max error: " + str(me[1]))
+
 
 rmse = rc.calculate_rmse(daily_runoff)
-print("Georgie v JKST RMSE: " + str(rmse[0]) + "\n" \
+print("Georgie v JSKT RMSE: " + str(rmse[0]) + "\n" \
       + "Georgie v RAW RMSE: " + str(rmse[1]) + "\n" \
         + "RAW v JSKT RMSE: " + str(rmse[2]))
 

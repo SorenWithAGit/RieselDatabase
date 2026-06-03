@@ -172,3 +172,16 @@ class runoff_calculator():
           raw_jskt_rmse = np.sqrt(np.mean((raw_calc[r_mask] - jskt_calc[r_mask]) ** 2))
 
           return jskt_G_rmse, raw_G_rmse, raw_jskt_rmse
+    
+    def calculate_max_error(self, daily_df):
+          g_calcd = np.array(daily_df["Georgie runoff (mm)"])
+          jskt_calc = np.array(daily_df["JSKT runoff (mm)"])
+          raw_calc = np.array(daily_df["raw runoff (mm)"])
+
+          j_mask = jskt_calc != 0
+          r_mask = raw_calc != 0
+
+          j_max_error = max(abs(g_calcd[j_mask] - jskt_calc[j_mask]))
+          r_max_error = max(abs(g_calcd[r_mask] - raw_calc[r_mask]))
+
+          return j_max_error, r_max_error
