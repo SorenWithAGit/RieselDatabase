@@ -104,6 +104,7 @@ class runoff_calculator():
 
             return df
     def create_flow_calculator(self, site, df):
+            np.seterr(invalid = "ignore")
             t_interval = self.field_constants["sampling interval"][site]
             multiplier_list = self.field_constants["flow constants"][site]
             check_list = self.field_constants["flow checks"][site]
