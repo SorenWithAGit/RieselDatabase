@@ -600,7 +600,7 @@ class read_txt:
         print(runoff_df)
     
     def read_txt_runoff(text_file):
-        cols = ["site", "month", "day", "year", "in"]
+        cols = ["site", "month", "day", "year", "runoff (in)"]
         df = pd.DataFrame(columns = cols)
         with open(text_file) as file:
             lines = file.readlines()
@@ -608,7 +608,9 @@ class read_txt:
             values = line.split()
             df.loc[len(df)] = [values[0], values[1], values[2], values[3], values[4]]
         df["date"] = pd.to_datetime(df[["year", "month", "day"]])
-        df = df.iloc[:, [0, 5, 4]]
+        df = df.iloc[:, [0, 5, 4]].astype({"site" : "str",
+                                           "date" : "datetime64[ns]",
+                                           "runoff (in)" : "float"})
         return df
     
     def read_sutron(sutron_file):
