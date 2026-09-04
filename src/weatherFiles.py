@@ -585,7 +585,7 @@ class read_txt:
         for row in rows[2:]:
             # print(row)
             Watershed.append(row[0])
-            date = str(row[1] + "/" + row[2]  + "/" + row[3])
+            date = str(row[3] + "/" + row[1]  + "/" + row[2])
             dates.append(date)
             time.append(row[4])
             flow_cfs.append(row[5])
@@ -593,6 +593,8 @@ class read_txt:
 
         runoff_df["Watershed"] = Watershed
         runoff_df["Date"] = dates
+        runoff_df["Date"] = pd.to_datetime["Date"]
+        runoff_df["Date"] = runoff_df["Date"].dt.date
         runoff_df["Time (min)"] = time
         runoff_df["flow (cfs)"] = flow_cfs
         runoff_df["flow (in/hr)"] = flow_inhr
