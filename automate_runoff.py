@@ -24,17 +24,19 @@ def automate_runoff(site):
     sut = wt.read_txt
     rc = cal.runoff_calculator()
 
-    runoff = pd.DataFrame(columns=["datetime", "site", "raw runoff (in)", "raw runoff (mm)"]).astype({
+    runoff = pd.DataFrame(columns=["datetime", "site", "raw runoff (in)", "raw runoff (mm)",]).astype({
         "datetime": "datetime64[ns]", "site": "str", "raw runoff (in)": "float", "raw runoff (mm)": "float"
     })
     
     flow_rate = pd.DataFrame(columns=[
         "site", "date", "time", "time (min)", "s level (ft)", "l level (ft)", 
-        "discharge rate (cfs)", "runoff rate (in/hr)", "raw runoff (mm)", "raw runoff (in)"
+        "discharge rate (cfs)", "runoff rate (in/hr)", "raw runoff (mm)", "raw runoff (in)",  
+        "l discharge rate (cfs)", "l runoff rate (in/hr)", "l raw runoff (mm)", "l raw runoff (in)"
     ]).astype({
         "site": "str", "date": "datetime64[ns]", "time": "datetime64[ns]", "time (min)": "float",
         "s level (ft)": "float", "l level (ft)": "float", "discharge rate (cfs)": "float",
-        "runoff rate (in/hr)": "float", "raw runoff (mm)": "float", "raw runoff (in)": "float"
+        "runoff rate (in/hr)": "float", "raw runoff (mm)": "float", "raw runoff (in)": "float",
+        "l discharge rate (cfs)" : "float", "l runoff rate (in/hr)" : "float", "l raw runoff (mm)" : "float", "l raw runoff (in)" : "float"
     })
 
     file_paths = glob.glob(root_folder + "//" + "*.dat")
@@ -57,6 +59,7 @@ def automate_runoff(site):
             runoff = runoff.groupby("datetime", as_index=False).sum()
 
             flow_calculator["raw runoff (in)"] = flow_calculator["raw runoff (mm)"] / 25.4
+            flow_calculator["l raw runoff (in)"] = flow_calculator["l raw runoff (mm)"] / 25.4
             flow_rate = pd.concat([flow_rate, flow_calculator], ignore_index=False)
             
         except Exception as e:

@@ -72,6 +72,21 @@ class runoff_calculator():
                                                 "Y10" : 10,
                                                 "Y13" : 5,
                                                 "Y14" : 5
+                                        },
+                                         "l flow constants" : {
+                                                "SW12" : [np.nan, np.nan],
+                                                "SW17" : [np.nan, np.nan],
+                                                "W1" : [61.5, 1.59],
+                                                "W6" : [24.6, 1.577],
+                                                "W10" : [24.6, 1.577],
+                                                "W12" : [np.nan, np.nan],
+                                                "W13" : [np.nan, np.nan],
+                                                "Y2" : [61.5, 1.59],
+                                                "Y6" : [24.6, 1.577],
+                                                "Y8" : [24.6, 1.577],
+                                                "Y10" : [24.6, 1.577],
+                                                "Y13" : [np.nan, np.nan],
+                                                "Y14" : [np.nan, np.nan]
                                         }
                 }
 
@@ -122,12 +137,16 @@ class runoff_calculator():
                 last_index = len(multiplier_list) - 1
 
                 clean_series = df["s level (ft)"].to_numpy()
+                clean_l_series = df["l level (ft)"].to_numpy()
                 indices = np.searchsorted(active_checks, clean_series, side="right")
 
                 indices = np.where(indices >= len(active_checks), last_index, indices)
 
                 matched_multipliers = multipliers_arr[indices]
                 matched_exponents = exponents_arr[indices]
+
+                l_multiplier = self.field_constants["l flow constants"][site][0]
+                l_exponent = self.field_constants["l flow constants"][site][1]
 
 
                 # Create flow calculator values
@@ -137,6 +156,21 @@ class runoff_calculator():
 
                 df["raw runoff (mm)"] = ((df["discharge rate (cfs)"]*self.in_per_ft*self.mm_per_in*(t_interval*self.s_per_min))/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
 
+                df["l discharge rate (cfs)"] = (clean_l_series**l_exponent) * l_multiplier
+                df["l runoff rate (in/hr)"] = ((df["l discharge rate (cfs)"]*self.in_per_ft*self.s_per_hr)/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
+                df["l raw runoff (mm)"] = ((df["l discharge rate (cfs)"]*self.in_per_ft*self.mm_per_in*(t_interval*self.s_per_min))/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
+
+                # if df["l level (ft)"] != np.nan:
+                #         print(df["l level (ft)"])
+                #         df["l discharge rate (cfs)"] = (clean_l_series**l_exponent) * l_multiplier
+                #         df["l runoff rate (in/hr)"] = ((df["l discharge rate (cfs)"]*self.in_per_ft*self.s_per_hr)/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
+                #         df["l raw runoff (mm)"] = ((df["l discharge rate (cfs)"]*self.in_per_ft*self.mm_per_in*(t_interval*self.s_per_min))/(self.field_constants["area (ac)"][site]*self.ft2_per_acre))
+                # else:
+                #         print("no l level")
+                #         df["l discharge rate (cfs)"] = np.nan
+                #         df["l runoff rate (in/hr)"] = np.nan
+                #         df["l raw runoff (mm)"] = np.nan
+                
                 return df
 
         def calculate_delta_t(self, runoff_df, flow_sum_df):
