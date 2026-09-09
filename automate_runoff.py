@@ -85,6 +85,13 @@ if __name__ == "__main__":
         dataframes[site] = runoff_df
         flows[site] = flow_df
 
+    dir = r"I:\programming\runoff\raw_logger_files"
+
+    for key, df in flows.items():
+        file_path = os.path.join(dir, f"{key}.csv")
+        df.to_csv(file_path, index = True)
+        print(f"Saved: {file_path}")
+
     finish = time.perf_counter()
     print(f'Finished in {round(finish - start, 2)} second(s)')
 
@@ -95,11 +102,6 @@ if __name__ == "__main__":
 #         dataframe = dataframes[site]
 #         dataframe.to_excel(writer, sheet_name = site, index = False)
 
-dir = r"I:\programming\runoff\raw_logger_files"
 
-# for key, df in flows.items():
-#     file_path = os.path.join(dir, f"{key}.csv")
-#     df.to_csv(file_path, index = True)
-#     print(f"Saved: {file_path}")
 
 
