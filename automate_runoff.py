@@ -87,10 +87,10 @@ if __name__ == "__main__":
 
     dir = r"I:\programming\runoff\raw_logger_files"
 
-    for key, df in flows.items():
-        file_path = os.path.join(dir, f"{key}.csv")
-        df.to_csv(file_path, index = True)
-        print(f"Saved: {file_path}")
+    # for key, df in flows.items():
+    #     file_path = os.path.join(dir, f"{key}.csv")
+    #     df.to_csv(file_path, index = True)
+    #     print(f"Saved: {file_path}")
 
     finish = time.perf_counter()
     print(f'Finished in {round(finish - start, 2)} second(s)')
