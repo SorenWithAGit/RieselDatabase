@@ -29,14 +29,14 @@ def automate_runoff(site):
     })
     
     flow_rate = pd.DataFrame(columns=[
-        "site", "date", "time", "time (min)", "s level (ft)", "l level (ft)", 
+        "file_name", "line_num", "site", "date", "time", "time (min)", "s level (ft)", "l level (ft)", 
         "discharge rate (cfs)", "runoff rate (in/hr)", "raw runoff (mm)", "raw runoff (in)",  
-        "l discharge rate (cfs)", "l runoff rate (in/hr)", "l raw runoff (mm)", "l raw runoff (in)"
+        "l discharge rate (cfs)", "l runoff rate (in/hr)", "l raw runoff (mm)", "l raw runoff (in)", "thoughts"
     ]).astype({
-        "site": "str", "date": "datetime64[ns]", "time": "datetime64[ns]", "time (min)": "float",
+        "file_name" : "str", "line_num" : "int", "site": "str", "date": "datetime64[ns]", "time": "datetime64[ns]", "time (min)": "float",
         "s level (ft)": "float", "l level (ft)": "float", "discharge rate (cfs)": "float",
         "runoff rate (in/hr)": "float", "raw runoff (mm)": "float", "raw runoff (in)": "float",
-        "l discharge rate (cfs)" : "float", "l runoff rate (in/hr)" : "float", "l raw runoff (mm)" : "float", "l raw runoff (in)" : "float"
+        "l discharge rate (cfs)" : "float", "l runoff rate (in/hr)" : "float", "l raw runoff (mm)" : "float", "l raw runoff (in)" : "float", "thoughts" : "str"
     })
 
     file_paths = glob.glob(root_folder + "//" + "*.dat")
@@ -44,28 +44,32 @@ def automate_runoff(site):
 
     for f, file in enumerate(file_paths):
         try:
+            print("file " + str(f + 1) + " out of " + str(len(file_paths) + 1) + ": " + file)
             sutron = sut.read_sutron(file)
             sutron.insert(1, "site", site)
             
             flow_calculator = rc.create_flow_calculator(site, sutron)
             flow_calculator["datetime"] = pd.to_datetime(flow_calculator["datetime"])
             flow_calculator.set_index("datetime", inplace=True)
-
-            raw_daily = flow_calculator["raw runoff (mm)"].resample("D").sum().reset_index()
-            raw_daily.insert(1, "site", site)
-            raw_daily.insert(2, "raw runoff (in)", (raw_daily["raw runoff (mm)"] / 25.4))
+            # raw_daily = flow_calculator.drop(columns = ["line_num"])
+            # raw_daily = raw_daily["raw runoff (mm)"].resample("D").sum().reset_index()
+            # raw_daily.insert(1, "site", site)
+            # raw_daily.insert(2, "raw runoff (in)", (raw_daily["raw runoff (mm)"] / 25.4))
             
-            runoff = pd.concat([runoff, raw_daily], ignore_index=True)
-            runoff = runoff.groupby("datetime", as_index=False).sum()
+            # runoff = pd.concat([runoff, raw_daily], ignore_index=True)
+            # runoff = runoff.groupby("datetime", as_index=False).sum()
+
+            flow_calculator.insert(0, "file_name", files[f])
 
             flow_calculator["raw runoff (in)"] = flow_calculator["raw runoff (mm)"] / 25.4
             flow_calculator["l raw runoff (in)"] = flow_calculator["l raw runoff (mm)"] / 25.4
-            flow_rate = pd.concat([flow_rate, flow_calculator], ignore_index=False)
+            # print(flow_calculator)
+            flow_rate = pd.concat([flow_rate, flow_calculator], ignore_index=True)
             
         except Exception as e:
             print(f"Error processing {files[f]}: {e}")
 
-    print(flow_rate)
+    # print(flow_rate)
     
     return site, runoff, flow_rate
 
@@ -81,16 +85,30 @@ if __name__ == "__main__":
     dataframes = {site: [] for site in sites}
     flows = {site: [] for site in sites}
 
+    target_cols = [
+    "discharge rate (cfs)", "runoff rate (in/hr)", "raw runoff (mm)", "raw runoff (in)",  
+    "l discharge rate (cfs)", "l runoff rate (in/hr)", "l raw runoff (mm)", "l raw runoff (in)"
+]
+
     for site, runoff_df, flow_df in raw_results:
         dataframes[site] = runoff_df
-        flows[site] = flow_df
+        f_cols = [c for c in target_cols if c in flow_df.columns]
+        flows[site] = flow_df[(flow_df[f_cols].notna() & (flow_df[f_cols] != 0)).any(axis=1)].round(4)
+        flows[site]["date"] = pd.to_datetime(flows[site]["date"], format = "mixed")
+        # flows[site]["time"] = pd.to_timedelta(flows[site]["time"])
+        # flows[site] = flows[site].sort_values(by = ["date", "time"])
 
+    for site, runoff_df, flow_df in raw_results:
+        print(flows[site])
+
+    
     dir = r"I:\programming\runoff\raw_logger_files"
 
-    # for key, df in flows.items():
-    #     file_path = os.path.join(dir, f"{key}.csv")
-    #     df.to_csv(file_path, index = True)
-    #     print(f"Saved: {file_path}")
+    for key, df in flows.items():
+        file_path = os.path.join(dir, f"{key}_filtered.csv")
+        df.to_csv(file_path, index = False)
+        print(f"Saved: {file_path}")
+
 
     finish = time.perf_counter()
     print(f'Finished in {round(finish - start, 2)} second(s)')
