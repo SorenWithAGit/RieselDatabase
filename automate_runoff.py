@@ -181,8 +181,10 @@ if __name__ == "__main__":
          is_consistent = (flow == discharge) | (flow == l_discharge)
          match_count = is_consistent.sum()
          incosistent_count = (~is_consistent).sum()
+         num_entries = len(report_dat["date"])
 
-
+         print(f"{site} number of published entries: {num_entries}")
+         print(f"{site} % Dates Matched: {total_merged / num_entries * 100:,.2f}%")
          print(site + f" Total overlapping date/time entries: {total_merged:,}")
          print(site + f" Consistent values (flow matches s or l): {match_count:,}")
          print(site + f" Inconsistent values (Mismatches):     {incosistent_count:,}")
