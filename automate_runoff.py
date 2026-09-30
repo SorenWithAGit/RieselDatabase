@@ -9,6 +9,7 @@ import os
 import time
 from multiprocessing import Pool
 from functools import partial
+from pathlib import Path
 
 
 # sutron_path = r"I:\programming\runoff\raw_logger_files\Y2\Y2_2008_2.DAT"
@@ -18,7 +19,7 @@ from functools import partial
 # print(sutron)
 
 
-def automate_runoff(site):
+def automate_runoff(site, root_folder):
     root_folder = rf"I:\programming\runoff\raw_logger_files\\{site}"
 
     sut = wt.read_txt
@@ -44,7 +45,10 @@ def automate_runoff(site):
 
     for f, file in enumerate(file_paths):
         try:
-            print("file " + str(f + 1) + " out of " + str(len(file_paths) + 1) + ": " + file)
+            parts = Path(file).parts
+            index = parts.index("raw_logger_files")
+            site_name = parts[index + 1]
+            print(site_name + " | raw data file " + str(f + 1) + " out of " + str(len(file_paths)) + ": " + file)
             sutron = sut.read_sutron(file)
             sutron.insert(1, "site", site)
             
@@ -74,16 +78,60 @@ def automate_runoff(site):
     return site, runoff, flow_rate
 
 
+def automatomate_reported_runoff(site, root_folder):
+    root_folder = rf"I:\programming\runoff\daren_reported_runoff\\{site}"
+    r = wt.read_txt
+
+    reported_ro = pd.DataFrame(columns = ["file_name", "line_num", "site", "date", "time", "time (min)", 
+                                                "flow (cfs)", "flow (in/hr)"]).astype(
+                                                        {"file_name" : "str",
+                                                        "line_num" : "int",
+                                                        "site" : "str",
+                                                        "date" : "str",
+                                                        "time" : "str",
+                                                        "time (min)" : "int",
+                                                        "flow (cfs)" : "float",
+                                                        "flow (in/hr)" : "float"})
+    
+    file_paths = glob.glob(root_folder + "//" + "*.txt")
+    files = [os.path.basename(path).split("/")[-1] for path in file_paths]
+    # print(file_paths)
+
+    for f, file in enumerate(file_paths):
+        try:
+            parts = Path(file).parts
+            index = parts.index("daren_reported_runoff")
+            site_name = parts[index + 1]
+            print(site_name + " | reported data file " + str(f + 1) + " out of " + str(len(file_paths)) + ": " + file)
+            ro = r.read_subdaily_runoff(file)
+            ro.insert(0, "file_name", files[f])
+            reported_ro = pd.concat([reported_ro, ro], ignore_index = True)
+
+        except Exception as e:
+                    print(f"Error processing {files[f]}: {e}")
+
+    return site, reported_ro
+
+
+
 if __name__ == "__main__":
     start = time.perf_counter()
 
     sites = ["SW12", "SW17", "W1", "W6", "W10", "W12", "W13", "Y2", "Y6", "Y8", "Y10", "Y13", "Y14"]
 
     with Pool() as pool:
-        raw_results = pool.map(automate_runoff, sites)
+        raw_data_path = r"I:\programming\runoff\raw_logger_files\\{site}"
+        raw_args = [(site, raw_data_path) for site in sites]
+
+        reported_data_path = r"I:\programming\runoff\daren_reported_runoff\\{site}"
+        reported_args = [(site, reported_data_path) for site in sites]
+
+        raw_results = pool.starmap(automate_runoff, raw_args)
+        reported_results = pool.starmap(automatomate_reported_runoff, reported_args)
 
     dataframes = {site: [] for site in sites}
     flows = {site: [] for site in sites}
+    reported_flows = {site: [] for site in sites}
 
     target_cols = [
     "discharge rate (cfs)", "runoff rate (in/hr)", "raw runoff (mm)", "raw runoff (in)",  
@@ -98,16 +146,24 @@ if __name__ == "__main__":
         # flows[site]["time"] = pd.to_timedelta(flows[site]["time"])
         # flows[site] = flows[site].sort_values(by = ["date", "time"])
 
-    for site, runoff_df, flow_df in raw_results:
-        print(flows[site])
+    for site, reported_runoff in reported_results:
+         reported_flows[site] = reported_runoff
+         reported_flows[site]["date"] = pd.to_datetime(reported_flows[site]["date"], format = "mixed")
+         
+
+    for site in sites:
+         print(flows[site])
+
+    for site in sites:
+         print(reported_flows[site])
 
     
-    dir = r"I:\programming\runoff\raw_logger_files"
+    raw_export_dir = r"I:\programming\runoff\raw_logger_files"
 
-    for key, df in flows.items():
-        file_path = os.path.join(dir, f"{key}_filtered.csv")
-        df.to_csv(file_path, index = False)
-        print(f"Saved: {file_path}")
+    # for key, df in flows.items():
+    #     file_path = os.path.join(raw_export_dir, f"{key}_filtered.csv")
+    #     df.to_csv(file_path, index = False)
+    #     print(f"Saved: {file_path}")
 
 
     finish = time.perf_counter()

@@ -2,15 +2,15 @@ import pandas as pd
 import os
 import glob
 import csv
-from datetime import datetime
 from pathlib import Path
 import numpy as np
+from datetime import datetime, timedelta
 
 
 class files:
     
     # collect list of file paths and file names from root folders
-    def get_files(root_folder: str, file_identifier: str):
+    def get_files(root_folder: "str", file_identifier: "str"):
         # Collect file paths and file names
         file_paths = glob.glob(root_folder + "//" + file_identifier)
         files = []
@@ -24,7 +24,7 @@ class files:
 class read_excel:
 
     # read weather data files
-    def read_weather(filepath: str):
+    def read_weather(filepath: "str"):
         # define headers
         headers = ["mo", "day", "year", "Max Temp (C)", "Min Temp (C)", "Precip (mm)"]
         # read excel data into pandas dataframe and drop original labels
@@ -39,7 +39,7 @@ class read_excel:
         return df
     
 
-    def read_evappan(filepath: str):
+    def read_evappan(filepath: "str"):
         headers = ["year", "month", "day", "Hook Gauge (in)", "After fill (in)", "Precipitation (in)", "Calculated Evaporation (in)"]
         # read excel data into pandas dataframe and isolate data
         df = pd.read_excel(filepath)
@@ -59,7 +59,7 @@ class read_excel:
 
 class read_txt:
 
-    def read_hr_weather(filepath: str):
+    def read_hr_weather(filepath: "str"):
         rows = []
         with open(filepath, "r") as file:
             for line in file:
@@ -93,22 +93,22 @@ class read_txt:
                                          "SRAD", "WIND", "WINDDIR", 
                                          "WMAX", "RAIN", "STAVG", 
                                          "STMAX", "STMIN"]).astype({
-                                             "DOY" : str,
-                                             "HOUR" : int,
-                                             "TGAD" : float,
-                                             "TMAX" : float,
-                                             "TMIN" : float,
-                                             "RHMXD" : float,
-                                             "RHUMD" : float,
-                                             "VPRSD" : float,
-                                             "SRAD" : float,
-                                             "WIND" : float,
-                                             "WINDDIR" : float,
-                                             "WMAX" : float,
-                                             "RAIN" : float,
-                                             "STAVG" : float,
-                                             "STMAX" : float,
-                                             "STMIN" : float
+                                             "DOY" : "str",
+                                             "HOUR" : "int",
+                                             "TGAD" : "float",
+                                             "TMAX" : "float",
+                                             "TMIN" : "float",
+                                             "RHMXD" : "float",
+                                             "RHUMD" : "float",
+                                             "VPRSD" : "float",
+                                             "SRAD" : "float",
+                                             "WIND" : "float",
+                                             "WINDDIR" : "float",
+                                             "WMAX" : "float",
+                                             "RAIN" : "float",
+                                             "STAVG" : "float",
+                                             "STMAX" : "float",
+                                             "STMIN" : "float"
                                          })
         
         # dates = []
@@ -332,21 +332,21 @@ class read_txt:
                 rdab = pd.concat([rdab, correction_df]).sort_index()
 
                 rdab = rdab.astype({
-                                             "DOY" : str,
-                                             "HOUR" : str,
-                                             "TGAD" : float,
-                                             "TMAX" : float,
-                                             "TMIN" : float,
-                                             "RHMXD" : float,
-                                             "RHUMD" : float,
-                                             "SRAD" : float,
-                                             "WIND" : float,
-                                             "WINDDIR" : float,
-                                             "WMAX" : float,
-                                             "RAIN" : float,
-                                             "STAVG" : float,
-                                             "STMAX" : float,
-                                             "STMIN" : float
+                                             "DOY" : "str",
+                                             "HOUR" : "str",
+                                             "TGAD" : "float",
+                                             "TMAX" : "float",
+                                             "TMIN" : "float",
+                                             "RHMXD" : "float",
+                                             "RHUMD" : "float",
+                                             "SRAD" : "float",
+                                             "WIND" : "float",
+                                             "WINDDIR" : "float",
+                                             "WMAX" : "float",
+                                             "RAIN" : "float",
+                                             "STAVG" : "float",
+                                             "STMAX" : "float",
+                                             "STMIN" : "float"
                 })
 
                 # print("corrected dataframe")
@@ -444,11 +444,11 @@ class read_txt:
 
             print("\n")
             df = pd.DataFrame(new_rows, columns = columns2).astype({
-                "YEAR" : int, "Day" : int, "HOUR" : float,
-                "RHMXD" : float, "RHUMD" : float, "VPRSD" : float,
-                "SRAD" : float, "WIND" : float, "WINDDIR" : float,
-                "WMAX" : float, "RAIN" : float, "STAVG" : float,
-                "STMAX" : float, "STMIN" : float
+                "YEAR" : "int", "Day" : "int", "HOUR" : "float",
+                "RHMXD" : "float", "RHUMD" : "float", "VPRSD" : "float",
+                "SRAD" : "float", "WIND" : "float", "WINDDIR" : "float",
+                "WMAX" : "float", "RAIN" : "float", "STAVG" : "float",
+                "STMAX" : "float", "STMIN" : "float"
             })
 
             dates = []
@@ -480,7 +480,7 @@ class read_txt:
 
 
 
-    def read_precip(filepath: str):
+    def read_precip(filepath: "str"):
         rows = []
         with open(filepath, "r") as file:
             for line in file:
@@ -497,10 +497,10 @@ class read_txt:
                 and rows[2] == []:
             rows = rows[3:]
 
-        rain_df = pd.DataFrame(columns = ["Raingauge", "Date", "Time (min)", "Precip (in)"]).astype({"Raingauge" : str,
-                                                                                                "Date" : str,
-                                                                                                "Time (min)" : str,
-                                                                                                "Precip (in)" : float})
+        rain_df = pd.DataFrame(columns = ["Raingauge", "Date", "Time (min)", "Precip (in)"]).astype({"Raingauge" : "str",
+                                                                                                "Date" : "str",
+                                                                                                "Time (min)" : "str",
+                                                                                                "Precip (in)" : "float"})
         # create empty lists to append data
         raingauge = []
         dates = []
@@ -559,47 +559,118 @@ class read_txt:
         print(monthly_df)
 
 
-    def read_runoff(filepath: str):
+    def read_subdaily_runoff(filepath: "str"):
         rows = []
         with open(filepath, "r") as file:
             for line in file:
                 rows.append(line.split())
-        rows = rows[2:]
+        # print(file)
+        # print(len(rows[2]))
 
-        # create pandas dataframe and format columns
-        runoff_df = pd.DataFrame(columns = ["Watershed", "Date", "Time (min)", 
-                                          "flow (cfs)", "flow (in/hr)"]).astype(
-                                                {"Watershed" : str,
-                                                "Date" : str,
-                                                "Time (min)" : int,
-                                                "flow (cfs)" : float,
-                                                "flow (in/hr)" : float})
-        # create empty lists to append data
-        Watershed = []
-        dates = []
-        time = []
-        flow_cfs = []
-        flow_inhr = []
+        # try block will read files where data entries begin on row 2 in the txt file
+        try:
+            if len(rows[1]) == 7:
+                
+                # create pandas dataframe and format columns
+                runoff_df = pd.DataFrame(columns = ["line_num", "site", "date", "time", "time (min)", 
+                                                    "flow (cfs)", "flow (in/hr)"]).astype(
+                                                        {"line_num" : "int",
+                                                        "site" : "str",
+                                                        "date" : "str",
+                                                        "time" : "str",
+                                                        "time (min)" : "int",
+                                                        "flow (cfs)" : "float",
+                                                        "flow (in/hr)" : "float"})
+                # create empty lists to append data
+                line_nums = []
+                Watershed = []
+                dates = []
+                time = []
+                time_min = []
+                flow_cfs = []
+                flow_inhr = []
+        
+                # from row append data to corresponding list
+                for n, row in enumerate(rows[1:]):
+                    # print(row)
+                    line_nums.append(n + 1)
+                    Watershed.append(row[0])
+                    date = str(row[3] + "/" + row[1]  + "/" + row[2])
+                    dates.append(date)
+                    time_value = int(row[4])
+                    hours = (time_value // 60) % 24
+                    minutes = time_value % 60
+                    time_str = f"{hours:02d}:{minutes:02d}"
+                    if time_str.startswith("24:"):
+                        time_str = "00:" + time_str[3:]
+                    timestamp = datetime.strptime(time_str, "%H:%M").time()
+                    time.append(timestamp)
+                    time_min.append(row[4])
+                    flow_cfs.append(row[5])
+                    flow_inhr.append(row[6])
+                runoff_df["line_num"] = line_nums
+                runoff_df["site"] = Watershed
+                runoff_df["date"] = dates
+                runoff_df["time"] = time
+                runoff_df["time (min)"] = time_min
+                runoff_df["flow (cfs)"] = flow_cfs
+                runoff_df["flow (in/hr)"] = flow_inhr
+                # print(runoff_df)
 
-        # from row append data to corresponding list
-        for row in rows[2:]:
-            # print(row)
-            Watershed.append(row[0])
-            date = str(row[3] + "/" + row[1]  + "/" + row[2])
-            dates.append(date)
-            time.append(row[4])
-            flow_cfs.append(row[5])
-            flow_inhr.append(row[6])
+                return runoff_df
 
-        runoff_df["Watershed"] = Watershed
-        runoff_df["Date"] = dates
-        runoff_df["Date"] = pd.to_datetime["Date"]
-        runoff_df["Date"] = runoff_df["Date"].dt.date
-        runoff_df["Time (min)"] = time
-        runoff_df["flow (cfs)"] = flow_cfs
-        runoff_df["flow (in/hr)"] = flow_inhr
+            # except block will read files that data entries begin on row 3 in txt file
+            elif len(rows[1]) != 7:
 
-        print(runoff_df)
+                # create pandas dataframe and format columns
+                runoff_df = pd.DataFrame(columns = ["line_num", "site", "date", "time", "time (min)", 
+                                                "flow (cfs)", "flow (in/hr)"]).astype(
+                                                        {"line_num" : "int",
+                                                        "site" : "str",
+                                                        "date" : "str",
+                                                        "time" : "str",
+                                                        "time (min)" : "int",
+                                                        "flow (cfs)" : "float",
+                                                        "flow (in/hr)" : "float"})
+                # create empty lists to append data
+                line_nums = []
+                Watershed = []
+                dates = []
+                time = []
+                time_min = []
+                flow_cfs = []
+                flow_inhr = []
+
+                # from row append data to corresponding list
+                for rn, row in enumerate(rows[2:]):
+                    # print(row)
+                    line_nums.append(rn + 1)
+                    Watershed.append(row[0])
+                    date = str(row[3] + "/" + row[1]  + "/" + row[2])
+                    dates.append(date)
+                    time_value = int(row[4])
+                    hours = (time_value // 60) % 24
+                    minutes = time_value % 60
+                    time_str = f"{hours:02d}:{minutes:02d}"
+                    if time_str.startswith("24:"):
+                        time_str = "00:" + time_str[3:]
+                    timestamp = datetime.strptime(time_str, "%H:%M").time()
+                    time.append(timestamp)
+                    time_min.append(row[4])
+                    flow_cfs.append(row[5])
+                    flow_inhr.append(row[6])
+                runoff_df["line_num"] = line_nums
+                runoff_df["site"] = Watershed
+                runoff_df["date"] = dates
+                runoff_df["time"] = time
+                runoff_df["time (min)"] = time_min
+                runoff_df["flow (cfs)"] = flow_cfs
+                runoff_df["flow (in/hr)"] = flow_inhr
+                # print(runoff_df)
+
+                return runoff_df
+        except:
+            print(filepath + " could not be read")
     
     def read_txt_runoff(text_file):
         cols = ["site", "month", "day", "year", "runoff (in)"]
@@ -715,7 +786,7 @@ class read_txt:
                                 data[e].insert(7, np.nan)
                             elif len(entry) == 7:
                                 data[e].insert(6, np.nan)
-                            data[e].insert(0, e)
+                            data[e].insert(0, e + 1)
                             # print(data[e])
                         sutron_df = pd.DataFrame(data, columns = cols).astype({
                             "line_num" : "int",
@@ -791,7 +862,7 @@ class read_txt:
                 return sutron_df
 
 
-    def read_sediment(filepath: str):
+    def read_sediment(filepath: "str"):
 
         # read rows of text files and append rows containing data
         rows = []
@@ -814,11 +885,11 @@ class read_txt:
 
             sed_df = pd.DataFrame(columns = ["Watershed", "Date", "Time (min)", "Sed conc (ppm)", 
                                             "Sed amount (t/a)"]).astype(
-                                                                        {"Watershed" : str,
-                                                                        "Date" : str,
-                                                                        "Time (min)" : str,
-                                                                        "Sed conc (ppm)" : float,
-                                                                        "Sed amount (t/a)" : float})
+                                                                        {"Watershed" : "str",
+                                                                        "Date" : "str",
+                                                                        "Time (min)" : "str",
+                                                                        "Sed conc (ppm)" : "float",
+                                                                        "Sed amount (t/a)" : "float"})
             
             Waterhsed = []
             dates = []
@@ -848,9 +919,9 @@ class read_txt:
 
             sed_df = pd.DataFrame(columns = ["Watershed", "Date", 
                                             "Sed amount (t/a)"]).astype(
-                                                                        {"Watershed" : str,
-                                                                        "Date" : str,
-                                                                        "Sed amount (t/a)" : float})
+                                                                        {"Watershed" : "str",
+                                                                        "Date" : "str",
+                                                                        "Sed amount (t/a)" : "float"})
             
             Waterhsed = []
             dates = []
@@ -874,7 +945,7 @@ class read_txt:
 
 class read_web:
 
-    def read_precip(file_path: str):
+    def read_precip(file_path: "str"):
         # create blank list to append rows to
         rows = []
         # open web file and convert to csv, append each row
@@ -887,10 +958,10 @@ class read_web:
         # print("row 3: " + str(rows[2]))
         
         # create pandas dataframe and format columns
-        rain_df = pd.DataFrame(columns = ["Raingauge", "Date", "Time (min)", "Precip (in)"]).astype({"Raingauge" : str,
-                                                                                                "Date" : str,
-                                                                                                "Time (min)" : str,
-                                                                                                "Precip (in)" : float})
+        rain_df = pd.DataFrame(columns = ["Raingauge", "Date", "Time (min)", "Precip (in)"]).astype({"Raingauge" : "str",
+                                                                                                "Date" : "str",
+                                                                                                "Time (min)" : "str",
+                                                                                                "Precip (in)" : "float"})
 
         # create empty lists to append data
         raingauge = []
@@ -961,7 +1032,7 @@ class read_web:
         print(monthly_df)
 
 
-    def read_runoff(filepath: str):
+    def read_runoff(filepath: "str"):
         # create blank list to append rows to
         rows = []
         # open web file and convert to csv, append each row
@@ -973,11 +1044,11 @@ class read_web:
         # create pandas dataframe and format columns
         runoff_df = pd.DataFrame(columns = ["Watershed", "Date", "Time (min)", 
                                           "flow (cfs)", "flow (in/hr)"]).astype(
-                                                {"Watershed" : str,
-                                                "Date" : str,
-                                                "Time (min)" : int,
-                                                "flow (cfs)" : float,
-                                                "flow (in/hr)" : float})
+                                                {"Watershed" : "str",
+                                                "Date" : "str",
+                                                "Time (min)" : "int",
+                                                "flow (cfs)" : "float",
+                                                "flow (in/hr)" : "float"})
             # create empty lists to append data
         Watershed = []
         dates = []
@@ -1008,7 +1079,7 @@ class read_web:
 class file_checker:
     
     # compare weather data files from Harmel and Umbraco Website
-    def check_weather_files(file1: str, file2: str, df1: pd.DataFrame, df2: pd.DataFrame):
+    def check_weather_files(file1: "str", file2: "str", df1: pd.DataFrame, df2: pd.DataFrame):
         # collect file name from path
         fn1 = os.path.basename(file1).split("/")[-1]
         fn2 = os.path.basename(file2).split("/")[-1]
