@@ -48,7 +48,7 @@ def automate_runoff(site, root_folder):
             parts = Path(file).parts
             index = parts.index("raw_logger_files")
             site_name = parts[index + 1]
-            print(site_name + " | raw data file " + str(f + 1) + " out of " + str(len(file_paths)) + ": " + file)
+            print(f"{site_name:<5} |    raw data file {f + 1:02} out of {len(file_paths):02}: {file}")
             sutron = sut.read_sutron(file)
             sutron.insert(1, "site", site)
             
@@ -102,7 +102,7 @@ def automatomate_reported_runoff(site, root_folder):
             parts = Path(file).parts
             index = parts.index("daren_reported_runoff")
             site_name = parts[index + 1]
-            print(site_name + " | reported data file " + str(f + 1) + " out of " + str(len(file_paths)) + ": " + file)
+            print(f"{site_name:<5} |    reported data file {f + 1:02} out of {len(file_paths):02}: {file}")
             ro = r.read_subdaily_runoff(file)
             ro.insert(0, "file_name", files[f])
             reported_ro = pd.concat([reported_ro, ro], ignore_index = True)
@@ -153,9 +153,42 @@ if __name__ == "__main__":
 
     for site in sites:
          print(flows[site])
+        #  print(flows[site].dtypes)
 
     for site in sites:
          print(reported_flows[site])
+        #  print(reported_flows[site].dtypes)
+
+    for site in sites:
+         raw_dat = flows[site]
+         report_dat = reported_flows[site]
+
+         raw_dat["time"] = pd.to_datetime(raw_dat["time"].astype(str), format="mixed").dt.time
+         report_dat["time"] = pd.to_datetime(report_dat["time"].astype(str), format="mixed").dt.time
+
+
+         merged_dat = pd.merge(
+              report_dat[["date", "time", "flow (cfs)"]],
+              raw_dat[["date", "time", "discharge rate (cfs)", "l discharge rate (cfs)"]],
+              on = ["date", "time"],
+              how = "inner"
+         )
+
+         total_merged = len(merged_dat)
+         flow = merged_dat["flow (cfs)"].astype(float)
+         discharge = merged_dat["discharge rate (cfs)"].astype(float)
+         l_discharge = merged_dat["l discharge rate (cfs)"].astype(float)
+         is_consistent = (flow == discharge) | (flow == l_discharge)
+         match_count = is_consistent.sum()
+         incosistent_count = (~is_consistent).sum()
+
+
+         print(site + f" Total overlapping date/time entries: {total_merged:,}")
+         print(site + f" Consistent values (flow matches s or l): {match_count:,}")
+         print(site + f" Inconsistent values (Mismatches):     {incosistent_count:,}")
+         print(f"{site} % Inconsistent Values (Mismatches): {incosistent_count / total_merged * 100:,.2f}%")
+         print("\n")
+         print("\n")
 
     
     raw_export_dir = r"I:\programming\runoff\raw_logger_files"
