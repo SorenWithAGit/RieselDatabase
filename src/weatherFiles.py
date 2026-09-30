@@ -593,7 +593,7 @@ class read_txt:
                 # from row append data to corresponding list
                 for n, row in enumerate(rows[1:]):
                     # print(row)
-                    line_nums.append(n + 1)
+                    line_nums.append(n + 2)
                     Watershed.append(row[0])
                     date = str(row[3] + "/" + row[1]  + "/" + row[2])
                     dates.append(date)
@@ -644,7 +644,7 @@ class read_txt:
                 # from row append data to corresponding list
                 for rn, row in enumerate(rows[2:]):
                     # print(row)
-                    line_nums.append(rn + 1)
+                    line_nums.append(rn + 3)
                     Watershed.append(row[0])
                     date = str(row[3] + "/" + row[1]  + "/" + row[2])
                     dates.append(date)
