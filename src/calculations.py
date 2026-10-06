@@ -29,7 +29,7 @@ class runoff_calculator():
                                                 "Y14" : 5.60
                                         },
                                         "flow constants" : {
-                                                "SW12" : [[1.93, 1.755], [2.371, 1.93], [2.574, 2.088], [2.488, 2.577]],
+                                                "SW12" : [[1.93, 1.755], [2.371, 1.93], [2.574, 2.088], [2.5048, 2.2674], [np.nan, np.nan]],
                                                 "SW17" : [[1.838, 1.723], [2.364, 1.929], [2.593, 2.124], [2.532, 2.239]],
                                                 "W1" : [[1.657, 2.72], [2.58, 3.138], [3.455, 4.047]],
                                                 "W6" : [[11.67, 2.508], [21.92, 2.914]],
@@ -44,7 +44,7 @@ class runoff_calculator():
                                                 "Y14" : [[13.5, 2.55], [14.15, 2.64]]
                                         },
                                         "flow checks" : {
-                                                "SW12" : [0.3, 0.6, 1.1, 1.1],
+                                                "SW12" : [0.3, 0.6, 1.1, 2.99, 2.99],
                                                 "SW17" : [0.3, 0.6, 1.5, 1.5],
                                                 "W1" : [0.399, 0.699, 0.699],
                                                 "W6" : [0.219, 0.219],
@@ -57,6 +57,21 @@ class runoff_calculator():
                                                 "Y10" : [0.219, 0.219],
                                                 "Y13" : [0.2, 0.6, 0.6],
                                                 "Y14" : [0.6, 0.6]
+                                        },
+                                        "max flows" : {
+                                                "SW12" : [0.2322, 0.8859, 3.1408, 29.9903, np.nan],
+                                                "SW17" : [0.2317, 0.8762, 6.2767, 6.2767],
+                                                "W1" : [0.144, 0.811, 0.811],
+                                                "W6" : [0.2624, 0.2624],
+                                                "W10" : [0.2624, 0.2624],
+                                                "W12" : [0.0372, 2.1818, 2.1818],
+                                                "W13" : [0.2264, 2.2733, 2.2733],
+                                                "Y2" : [4.129, 11.385, 11.385],
+                                                "Y6" : [0.3313, 2.2553, 2.553],
+                                                "Y8" : [0.2624, 0.2624],
+                                                "Y10" : [0.2624, 0.2624],
+                                                "Y13" : [0.2278, 3.5930, 3.9530],
+                                                "Y14" : [3.6735, 3.6735]
                                         },
                                         "sampling interval" : {
                                                 "SW12" : 5,
@@ -173,6 +188,37 @@ class runoff_calculator():
                 
                 return df
 
+        def calculate_level(self, discharge_rate, site):
+                t_interval = self.field_constants["sampling interval"][site]
+                multiplier_list = self.field_constants["flow constants"][site]
+                check_list = self.field_constants["flow checks"][site]
+                max_q = self.field_constants["max flows"][site]
+                active_checks = check_list[:-1]
+                q_checks = max_q[:-1]
+                sublist_arr = np.array(multiplier_list, dtype=float)
+                multipliers_arr = sublist_arr[:, 0]  # First column: Multipliers
+                exponents_arr = sublist_arr[:, 1]  # Second column: Exponents
+
+                last_index = len(multiplier_list) - 1
+
+
+
+                indices = np.searchsorted(q_checks, discharge_rate, side="right")
+
+                indices = np.where(indices >= len(q_checks), last_index, indices)
+
+                matched_multipliers = multipliers_arr[indices]
+                matched_exponents = exponents_arr[indices]
+
+                l_multiplier = self.field_constants["l flow constants"][site][0]
+                l_exponent = self.field_constants["l flow constants"][site][1]
+
+                s_level = round((discharge_rate / matched_multipliers)**(1/matched_exponents), 3)
+                l_level = round((discharge_rate / l_multiplier)**(1/l_exponent), 3)
+
+                return s_level, l_level
+
+
         def calculate_delta_t(self, runoff_df, flow_sum_df):
                 merged_df = pd.merge(flow_sum_df, runoff_df, on = "date")
                 merged_df["delta_t"] = merged_df["in"] / merged_df["flow (in/hr)"]
@@ -238,3 +284,8 @@ class runoff_calculator():
                 return solutions
 
 
+# rc = runoff_calculator()
+
+# y14_0_0568 = rc.calculate_level(0.0026, "Y14")
+# print("s level: " + str(y14_0_0568[0]))
+# print("y level: " + str(y14_0_0568[1]))
