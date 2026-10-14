@@ -245,6 +245,137 @@ def plot_runoff_comparison(site, comparison_df, output_folder = None):
                   else:
                     plt.show()
 
+def plot_first_last_s_q_scatter(site, summary_df, save_filepath):
+    """
+    Generates side-by-side boxplots for First vs Last Large Discharge rates 
+    plotted across each unique Date on the X-axis.
+    """
+    if summary_df is None or summary_df.empty:
+        print(f"Skipping boxplot for Site {site}: No summary data available.")
+        return
+
+    if "date" not in summary_df.columns:
+        local_df = summary_df.reset_index()
+    else:
+        local_df = summary_df.copy()
+
+    # 1. Reshape ("melt") the data from wide to long format so Seaborn can group it
+    # This transforms columns into rows categorized by an identifier column
+    melted_df = local_df.melt(
+        id_vars=["date"], 
+        value_vars=["first_s_discharge", "last_s_discharge"],
+        var_name="Discharge_Type", 
+        value_name="Discharge_Rate"
+    )
+
+    # Convert the type labels to clean display labels
+    melted_df["Discharge_Type"] = melted_df["Discharge_Type"].map({
+        "first_s_discharge": "First S Discharge",
+        "last_s_discharge": "Last S Discharge"
+    })
+
+    # Sort by date string or object to keep the timeline chronological on the axis
+    melted_df = melted_df.sort_values("date")
+
+    # 2. Initialize the plot layout workspace
+    plt.figure(figsize=(12, 6))
+    
+    # 3. Use Seaborn to plot side-by-side boxplots grouped by Date
+    sns.scatterplot(
+        data=melted_df,
+        x="date",
+        y="Discharge_Rate",
+        hue="Discharge_Type",
+        palette=["#1f77b4", "#ff7f0e"], # Custom Blue and Orange color scheme
+        width=0.6
+    )
+
+    # 4. Clean up design labels and layout structure
+    plt.title(f"Overall s Discharge Rate Distribution - Site {site}", fontsize=14, pad=15)
+    plt.xlabel("Date", fontsize=11)
+    plt.ylabel("l Discharge Rate (cfs)", fontsize=11)
+    
+    # Rotate the date text labels slightly if your dataset spans across many days
+    plt.xticks(rotation=45, ha='right')
+    
+    plt.legend(title="Discharge Metrics", loc="upper left")
+    plt.grid(True, linestyle='--', alpha=0.5, axis='y')
+    plt.tight_layout()
+
+    # 5. Handle automatic subfolder path creation safely
+    save_path = os.path.join(save_filepath, f"{site}/{site}_s_Q_overall_scatter.png")
+    # os.makedirs(parent_folder, exist_ok=True)
+
+    # Save to disk
+    plt.savefig(save_path, dpi=300)
+    print(f"Successfully saved timeline distribution boxplot to: {save_path}")
+    plt.close() # Free graphics engine RAM blocks immediately
+
+def plot_first_last_l_q_scatter(site, summary_df, save_filepath):
+    """
+    Generates side-by-side boxplots for First vs Last Large Discharge rates 
+    plotted across each unique Date on the X-axis.
+    """
+    if summary_df is None or summary_df.empty:
+        print(f"Skipping boxplot for Site {site}: No summary data available.")
+        return
+
+    if "date" not in summary_df.columns:
+        local_df = summary_df.reset_index()
+    else:
+        local_df = summary_df.copy()
+
+    # 1. Reshape ("melt") the data from wide to long format so Seaborn can group it
+    # This transforms columns into rows categorized by an identifier column
+    melted_df = local_df.melt(
+        id_vars=["date"], 
+        value_vars=["first_l_discharge", "last_l_discharge"],
+        var_name="Discharge_Type", 
+        value_name="Discharge_Rate"
+    )
+
+    # Convert the type labels to clean display labels
+    melted_df["Discharge_Type"] = melted_df["Discharge_Type"].map({
+        "first_l_discharge": "First L Discharge",
+        "last_l_discharge": "Last L Discharge"
+    })
+
+    # Sort by date string or object to keep the timeline chronological on the axis
+    melted_df = melted_df.sort_values("date")
+
+    # 2. Initialize the plot layout workspace
+    plt.figure(figsize=(12, 6))
+    
+    # 3. Use Seaborn to plot side-by-side boxplots grouped by Date
+    sns.scatterplot(
+        data=melted_df,
+        x="date",
+        y="Discharge_Rate",
+        hue="Discharge_Type",
+        palette=["#1f77b4", "#ff7f0e"], # Custom Blue and Orange color scheme
+    )
+
+    # 4. Clean up design labels and layout structure
+    plt.title(f"Overall l Discharge Rate Distribution - Site {site}", fontsize=14, pad=15)
+    plt.xlabel("Date", fontsize=11)
+    plt.ylabel("l Discharge Rate (cfs)", fontsize=11)
+    
+    # Rotate the date text labels slightly if your dataset spans across many days
+    plt.xticks(rotation=45, ha='right')
+    
+    plt.legend(title="Discharge Metrics", loc="upper left")
+    plt.grid(True, linestyle='--', alpha=0.5, axis='y')
+    plt.tight_layout()
+
+    # 5. Handle automatic subfolder path creation safely
+    save_path = os.path.join(save_filepath, f"{site}/{site}_l_Q_overall_scatter.png")
+    # os.makedirs(parent_folder, exist_ok=True)
+
+    # Save to disk
+    plt.savefig(save_path, dpi=300)
+    print(f"Successfully saved timeline distribution boxplot to: {save_path}")
+    plt.close() # Free graphics engine RAM blocks immediately
+
 def plot_first_last_s_box(site, summary_df, save_filepath):
     """
     Generates side-by-side boxplots for First vs Last Large Discharge rates 
@@ -271,7 +402,7 @@ def plot_first_last_s_box(site, summary_df, save_filepath):
     # Convert the type labels to clean display labels
     melted_df["Discharge_Type"] = melted_df["Discharge_Type"].map({
         "first_s_discharge": "First S Discharge",
-        "last_S_discharge": "Last S Discharge"
+        "last_s_discharge": "Last S Discharge"
     })
 
     # Sort by date string or object to keep the timeline chronological on the axis
@@ -287,7 +418,6 @@ def plot_first_last_s_box(site, summary_df, save_filepath):
         y="Discharge_Rate",
         hue="Discharge_Type",
         palette=["#1f77b4", "#ff7f0e"], # Custom Blue and Orange color scheme
-        width=0.6
     )
 
     # 4. Clean up design labels and layout structure
@@ -411,7 +541,7 @@ if __name__ == "__main__":
                     last_s_discharge="last"
                     )
                   print(f"--- First & last s Q: {site} ---")
-                  summary_s_q_df = summary_s_q_df[(summary_s_q_df["first_s_discharge"] != float(0)) | (summary_s_q_df["last_s_discharge"] != float(0))]
+                #   summary_s_q_df = summary_s_q_df[(summary_s_q_df["first_s_discharge"] != float(0)) | (summary_s_q_df["last_s_discharge"] != float(0))]
                   print(summary_s_q_df)
 
                   summary_l_q_df = comparisons[site].groupby("date")["raw l discharge rate (cfs)"].agg(
@@ -419,14 +549,18 @@ if __name__ == "__main__":
                     last_l_discharge="last"
                     )
                   print(f"--- First & last l Q: {site} ---")
-                  summary_l_q_df = summary_l_q_df[(summary_l_q_df["first_l_discharge"] != float(0)) | (summary_l_q_df["last_l_discharge"] != float(0))]
+                #   summary_l_q_df = summary_l_q_df[(summary_l_q_df["first_l_discharge"] != float(0)) | (summary_l_q_df["last_l_discharge"] != float(0))]
                   print(summary_l_q_df)
 
                 #   output = r"I:\programming\runoff\scatter_plots\daren_l_Q"
                 #   plot_runoff_comparison(site, comparisons[site], output)
 
-                  save_path = r"I:\programming\runoff\box_plots\daren_l_Q"
-                  plot_first_last_s_box(site, summary_s_q_df, save_path)
+
+                #   save_path = r"I:\programming\runoff\box_plots\daren_l_Q"
+                #   plot_first_last_s_box(site, summary_s_q_df, save_path)
+
+                  save_path = r"I:\programming\runoff\scatter_plots\daren_l_Q"
+                  plot_first_last_l_q_scatter(site, summary_l_q_df, save_path)
 
                 #   save_path = r"I:\programming\runoff\box_plots\daren_l_Q"
                 #   plot_first_last_q_box(site, summary_l_q_df, save_path)
