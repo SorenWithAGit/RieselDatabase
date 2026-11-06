@@ -1,3 +1,11 @@
+import os
+
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VACLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,7 +13,6 @@ import seaborn as sns
 from src import calculations as cal
 from src import weatherFiles as wt
 import glob
-import os
 import time
 from multiprocessing import Pool
 from functools import partial
@@ -18,32 +25,21 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 
-# sutron_path = r"I:\programming\runoff\raw_logger_files\Y2\Y2_2008_2.DAT"
-
-# sut = wt.read_txt
-# sutron = sut.read_sutron(sutron_path)
-# print(sutron)
-
-
 def automate_runoff(site, root_folder):
     root_folder = rf"I:\programming\runoff\raw_logger_files\\{site}"
 
-    sut = wt.read_txt
+    sut = wt.runoff
     rc = cal.runoff_calculator()
-
-    runoff = pd.DataFrame(columns=["datetime", "site", "raw runoff (in)", "raw runoff (mm)",]).astype({
-        "datetime": "datetime64[ns]", "site": "str", "raw runoff (in)": "float", "raw runoff (mm)": "float"
-    })
     
     flow_rate = pd.DataFrame(columns=[
-        "file_name", "line_num", "site", "date", "time", "time (min)", "s level (ft)", "l level (ft)", 
+        "file_name", "line_num", "site", "date", "time", "time (min)", "sampling interval (min)", "s level (ft)", "l level (ft)", 
         "discharge rate (cfs)", "runoff rate (in/hr)", "raw runoff (mm)", "raw runoff (in)",  
-        "l discharge rate (cfs)", "l runoff rate (in/hr)", "l raw runoff (mm)", "l raw runoff (in)", "thoughts"
+        "l discharge rate (cfs)", "l runoff rate (in/hr)", "l raw runoff (mm)", "l raw runoff (in)", "fn_proc_block"
     ]).astype({
         "file_name" : "str", "line_num" : "int", "site": "str", "date": "datetime64[ns]", "time": "datetime64[ns]", "time (min)": "float",
-        "s level (ft)": "float", "l level (ft)": "float", "discharge rate (cfs)": "float",
+        "sampling interval (min)" : "int", "s level (ft)": "float", "l level (ft)": "float", "discharge rate (cfs)": "float",
         "runoff rate (in/hr)": "float", "raw runoff (mm)": "float", "raw runoff (in)": "float",
-        "l discharge rate (cfs)" : "float", "l runoff rate (in/hr)" : "float", "l raw runoff (mm)" : "float", "l raw runoff (in)" : "float", "thoughts" : "str"
+        "l discharge rate (cfs)" : "float", "l runoff rate (in/hr)" : "float", "l raw runoff (mm)" : "float", "l raw runoff (in)" : "float", "fn_proc_block" : "str"
     })
 
     file_paths = glob.glob(root_folder + "//" + "*.dat")
@@ -55,19 +51,12 @@ def automate_runoff(site, root_folder):
             index = parts.index("raw_logger_files")
             site_name = parts[index + 1]
             print(f"{site_name:<5} |    raw data file {f + 1:02} out of {len(file_paths):02}: {file}")
-            sutron = sut.read_sutron(file)
+            sutron = sut.read_sutron_txt(file)
             sutron.insert(1, "site", site)
             
             flow_calculator = rc.create_flow_calculator(site, sutron)
             flow_calculator["datetime"] = pd.to_datetime(flow_calculator["datetime"])
             flow_calculator.set_index("datetime", inplace=True)
-            # raw_daily = flow_calculator.drop(columns = ["line_num"])
-            # raw_daily = raw_daily["raw runoff (mm)"].resample("D").sum().reset_index()
-            # raw_daily.insert(1, "site", site)
-            # raw_daily.insert(2, "raw runoff (in)", (raw_daily["raw runoff (mm)"] / 25.4))
-            
-            # runoff = pd.concat([runoff, raw_daily], ignore_index=True)
-            # runoff = runoff.groupby("datetime", as_index=False).sum()
 
             flow_calculator.insert(0, "file_name", files[f])
 
@@ -76,6 +65,14 @@ def automate_runoff(site, root_folder):
             # print(flow_calculator)
             flow_rate = pd.concat([flow_rate, flow_calculator], ignore_index=True)
             flow_rate["date"] = pd.to_datetime(flow_rate["date"], format = "mixed")
+            # flow_rate["sampling interval (min)"] = (flow_rate["sampling interval (min)"].rolling(window=7, center=True, min_periods=1) \
+            #                             .apply(lambda x: x.mode()[0] if not x.mode().empty else x.iloc[3]))
+
+            # flow_rate["sampling interval (min)"] = (
+            #         flow_rate["sampling interval (min)"]
+            #         .rolling(window=7, center=True, min_periods=1)
+            #         .median()
+            # )
             
         except Exception as e:
             print(f"Error processing {files[f]}: {e}")
@@ -87,7 +84,7 @@ def automate_runoff(site, root_folder):
 
 def automate_reported_runoff(site, root_folder):
     root_folder = rf"I:\programming\runoff\daren_reported_runoff\\{site}"
-    r = wt.read_txt
+    r = wt.runoff
 
     reported_ro = pd.DataFrame(columns = ["file_name", "line_num", "site", "date", "time", "time (min)", 
                                                 "flow (cfs)", "flow (in/hr)"]).astype(
@@ -110,7 +107,7 @@ def automate_reported_runoff(site, root_folder):
             index = parts.index("daren_reported_runoff")
             site_name = parts[index + 1]
             print(f"{site_name:<5} |    reported data file {f + 1:02} out of {len(file_paths):02}: {file}")
-            ro = r.read_subdaily_runoff(file)
+            ro = r.read_subdaily_txt(file)
             ro.insert(0, "file_name", files[f])
             reported_ro = pd.concat([reported_ro, ro], ignore_index = True)
             reported_ro["date"] = pd.to_datetime(reported_ro["date"], format = "mixed")
@@ -145,7 +142,7 @@ def automate_merge(site, raw_dat_chunk, report_dat_chunk):
 
     merged_dat = pd.merge(
         report_dat[["report_index", "file_name", "line_num", "site", "date", "time (min)", "flow (cfs)"]],
-        raw_dat[["date", "time (min)", "raw_index", "file_name", "line_num", "s level (ft)", "l level (ft)", "discharge rate (cfs)", "l discharge rate (cfs)"]],
+        raw_dat[["date", "time (min)", "sampling interval (min)", "raw_index", "file_name", "line_num", "s level (ft)", "l level (ft)", "discharge rate (cfs)", "l discharge rate (cfs)"]],
         on = ["date", "time (min)"],
         how = "inner"
     )
@@ -189,8 +186,9 @@ def automate_l_q_check(comparison_df):
     return l_q_comparison
 
 def automate_runoff_comparison(site, raw_root_folder, report_root_folder):
-    raw_root_folder = r"I:\programming\runoff\raw_logger_files\\{site}"
-    report_root_folder = r"I:\programming\runoff\daren_reported_runoff\\{site}"
+    # raw_root_folder = r"I:\programming\runoff\raw_logger_files\\{site}"
+    # report_root_folder = r"I:\programming\runoff\daren_reported_runoff\\{site}"
+    smpl_int_output_folder = r"I:\programming\runoff\scatter_plots\sampling_intervals"
 
     raw_results = automate_runoff(site, raw_root_folder)
     reported_results = automate_reported_runoff(site, report_root_folder)
@@ -199,7 +197,31 @@ def automate_runoff_comparison(site, raw_root_folder, report_root_folder):
     reported_results["date"] = pd.to_datetime(reported_results["date"], format = "mixed")
 
     raw_results["time (min)"] = (raw_results["time (min)"]).astype(int)
+
+    # raw_results["sampling interval (min)"] = (raw_results["sampling interval (min)"].rolling(window=7, center=True, min_periods=1) \
+    #                             .apply(lambda x: x.mode()[0] if not x.mode().empty else x.iloc[3]))
+
+
+#     rolling_median = (
+#     raw_results["sampling interval (min)"]
+#     .rolling(window=7, center=True, min_periods=1)
+#     .median()
+# )
+    allowed_intervals = [5, 10, 15]
+
+#     is_not_allowed = ~raw_results["sampling interval (min)"].isin(allowed_intervals)
+
+#     raw_results["sampling interval (min)"] = np.where(
+#     is_not_allowed, 
+#     rolling_median, 
+#     raw_results["sampling interval (min)"]
+# )
+
     reported_results["time (min)"] = (reported_results["time (min)"]).astype(int)
+
+    print(raw_results[~raw_results["sampling interval (min)"].isin(allowed_intervals)])
+
+    # plot_sampling_interval(site, raw_results, smpl_int_output_folder)
 
     merged_data = automate_merge(site, raw_results, reported_results)
 
@@ -212,6 +234,31 @@ def automate_runoff_comparison(site, raw_root_folder, report_root_folder):
 
     return comparison
 
+def plot_sampling_interval(site, raw_results, output_folder = None):
+                  dates = pd.to_datetime(raw_results["date"], format = "mixed")
+                  smpl_ints = raw_results["sampling interval (min)"].astype(float)
+
+                  plt.figure(figsize=(10, 6))
+
+                  plt.scatter(dates, smpl_ints, color='blue', alpha=0.6, edgecolors='none', 
+                    label='sampling interval (min)')
+
+                  plt.title(f"Sampling intervals Over Time - Site {site}", fontsize=14, pad=15)
+                  plt.xlabel("Date)", fontsize=11)
+                  plt.ylabel("Sampling Interval (min)", fontsize=11)
+                  plt.legend(loc='upper left', frameon=True)
+                  plt.grid(True, linestyle='--', alpha=0.5)
+                  plt.tight_layout()
+
+                  if output_folder:
+                    os.makedirs(output_folder, exist_ok=True)
+                    save_path = os.path.join(output_folder, f"{site}_sampling_intervals.png")
+                    plt.savefig(save_path, dpi=300)
+                    print(f"Saved visualization matrix to: {save_path}")
+                    plt.close() # Instantly frees memory blocks
+                  
+                  else:
+                    plt.show()
 
 def plot_runoff_comparison(site, comparison_df, output_folder = None):
                   dates = pd.to_datetime(comparison_df["date"], format = "mixed")
@@ -287,13 +334,12 @@ def plot_first_last_s_q_scatter(site, summary_df, save_filepath):
         y="Discharge_Rate",
         hue="Discharge_Type",
         palette=["#1f77b4", "#ff7f0e"], # Custom Blue and Orange color scheme
-        width=0.6
     )
 
     # 4. Clean up design labels and layout structure
     plt.title(f"Overall s Discharge Rate Distribution - Site {site}", fontsize=14, pad=15)
     plt.xlabel("Date", fontsize=11)
-    plt.ylabel("l Discharge Rate (cfs)", fontsize=11)
+    plt.ylabel("s Discharge Rate (cfs)", fontsize=11)
     
     # Rotate the date text labels slightly if your dataset spans across many days
     plt.xticks(rotation=45, ha='right')
@@ -373,7 +419,54 @@ def plot_first_last_l_q_scatter(site, summary_df, save_filepath):
 
     # Save to disk
     plt.savefig(save_path, dpi=300)
-    print(f"Successfully saved timeline distribution boxplot to: {save_path}")
+    print(f"Successfully saved timeline distribution scatter to: {save_path}")
+    plt.close() # Free graphics engine RAM blocks immediately
+
+def plot_total_runoff_scatter(site, daily_discharge_df, save_filepath):
+    """
+    Generates side-by-side boxplots for total runoff 
+    plotted across each unique Date on the X-axis.
+    """
+    if daily_discharge_df is None or daily_discharge_df.empty:
+        print(f"Skipping scatter for Site {site}: No summary data available.")
+        return
+
+    if "date" not in daily_discharge_df.columns:
+        local_df = daily_discharge_df.reset_index()
+    else:
+        local_df = daily_discharge_df.copy()
+
+
+    # 2. Initialize the plot layout workspace
+    plt.figure(figsize=(12, 6))
+    
+    # 3. Use Seaborn to plot side-by-side scatter grouped by Date
+    sns.scatterplot(
+        data=local_df,
+        x="date",
+        y="total_runoff (mm)",
+        palette=["#1f77b4"], # Custom Blue 
+    )
+
+    # 4. Clean up design labels and layout structure
+    plt.title(f"Total runoff (mm) - Site {site}", fontsize=14, pad=15)
+    plt.xlabel("Date", fontsize=11)
+    plt.ylabel("Runoff (mm)", fontsize=11)
+    
+    # Rotate the date text labels slightly if your dataset spans across many days
+    plt.xticks(rotation=45, ha='right')
+    
+    plt.legend(title="Discharge Metrics", loc="upper left")
+    plt.grid(True, linestyle='--', alpha=0.5, axis='y')
+    plt.tight_layout()
+
+    # 5. Handle automatic subfolder path creation safely
+    save_path = os.path.join(save_filepath, f"{site}/{site}_total_runoff.png")
+    # os.makedirs(parent_folder, exist_ok=True)
+
+    # Save to disk
+    plt.savefig(save_path, dpi=300)
+    print(f"Successfully saved timeline distribution scatter to: {save_path}")
     plt.close() # Free graphics engine RAM blocks immediately
 
 def plot_first_last_s_box(site, summary_df, save_filepath):
@@ -525,16 +618,19 @@ if __name__ == "__main__":
     comparisons = {site: [] for site in sites}
 
     for site, comparison in zip(sites, comparison_results):
-             comparisons[site] = comparison          
+             comparisons[site] = comparison
+
 
              if site not in l_sites:
                 print(f"--- Filtered Data for Site with no l Q: {site} ---")
-                print(comparisons[site])
+                # print(comparisons[site])
 
              elif site in l_sites:
                   print(f"--- Filtered Data for Site with matching l Q: {site} ---")
                   comparisons[site] = automate_l_q_check(comparisons[site])
-                  print(comparisons[site])
+                #   print(comparisons[site])
+
+                #   total_runoff_df = comparisons[site].groupby("date")
 
                   summary_s_q_df = comparisons[site].groupby("date")["raw s discharge rate (cfs)"].agg(
                     first_s_discharge="first",
@@ -542,7 +638,7 @@ if __name__ == "__main__":
                     )
                   print(f"--- First & last s Q: {site} ---")
                 #   summary_s_q_df = summary_s_q_df[(summary_s_q_df["first_s_discharge"] != float(0)) | (summary_s_q_df["last_s_discharge"] != float(0))]
-                  print(summary_s_q_df)
+                #   print(summary_s_q_df)
 
                   summary_l_q_df = comparisons[site].groupby("date")["raw l discharge rate (cfs)"].agg(
                     first_l_discharge="first",
@@ -550,7 +646,7 @@ if __name__ == "__main__":
                     )
                   print(f"--- First & last l Q: {site} ---")
                 #   summary_l_q_df = summary_l_q_df[(summary_l_q_df["first_l_discharge"] != float(0)) | (summary_l_q_df["last_l_discharge"] != float(0))]
-                  print(summary_l_q_df)
+                #   print(summary_l_q_df)
 
                 #   output = r"I:\programming\runoff\scatter_plots\daren_l_Q"
                 #   plot_runoff_comparison(site, comparisons[site], output)
@@ -559,8 +655,9 @@ if __name__ == "__main__":
                 #   save_path = r"I:\programming\runoff\box_plots\daren_l_Q"
                 #   plot_first_last_s_box(site, summary_s_q_df, save_path)
 
-                  save_path = r"I:\programming\runoff\scatter_plots\daren_l_Q"
-                  plot_first_last_l_q_scatter(site, summary_l_q_df, save_path)
+                #   save_path = r"I:\programming\runoff\scatter_plots\daren_l_Q"
+                #   plot_first_last_l_q_scatter(site, summary_l_q_df, save_path)
+                #   plot_first_last_s_q_scatter(site, summary_s_q_df, save_path)
 
                 #   save_path = r"I:\programming\runoff\box_plots\daren_l_Q"
                 #   plot_first_last_q_box(site, summary_l_q_df, save_path)
@@ -653,7 +750,9 @@ if __name__ == "__main__":
 
 
     finish = time.perf_counter()
-    print(f'Finished in {round(finish - start, 2)} second(s)')
+    total_seconds = finish - start
+    mins, secs = divmod(total_seconds, 60)
+    print(f'Finished in {int(mins)} minute(s) and {round(secs)} second(s)')
 
 
 
